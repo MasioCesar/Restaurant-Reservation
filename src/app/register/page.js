@@ -7,11 +7,19 @@ export default function Login() {
     return (
         <div className="flex h-screen w-full bg-[#411313]">
             <div className="w-[66%] bg-[#231013] relative">
-                <Image
-                    src="/icbuffet.png"
-                    alt="ICBuffet"
-                    fill
-                />
+                <div className="relative h-full w-full">
+                    <Image
+                        src="/icbuffet.png"
+                        alt="ICBuffet"
+                        fill
+                    />
+                    <div className="absolute bottom-0 bg-[#231013] bg-opacity-90 text-white p-4 w-full">
+                        <h1 className="text-2xl font-bold flex items-center justify-center p-2">IC Buffet - Reserva de Restaurantes</h1>
+                        <p className="text-lg flex justify-center items-center">O IC Buffet oferece uma experiência gastronômica única, permitindo reservas on-line de maneira rápida e prática.</p>
+                        <p className="flex justify-center items-center">Contato: (81) 4002-8922 | contato@icbuffet.com</p>
+                        <p className="text-xs flex justify-center items-center py-2">© 2024 IC Buffet. Todos os direitos reservados.</p>
+                    </div>
+                </div>
             </div>
             <div className="w-[34%] relative">
                 <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
