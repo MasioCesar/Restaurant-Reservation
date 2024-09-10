@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Box, Button, Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
-import Image from "next/image";
 import CloseIcon from '@mui/icons-material/Close';
+import { Header } from "@/components/header";
 
 export default function LayoutPage() {
 	const [open, setOpen] = useState(false);
@@ -32,14 +32,7 @@ export default function LayoutPage() {
 	return (
 		<div className="flex flex-col h-screen w-full bg-[#231013]">
 			{/* Parte de cima */}
-			<div className="bg-[#411313] relative flex items-center pl-4">
-				<Image
-					src="/logo.png"
-					alt="ICBuffet"
-					width={90}
-					height={90}
-				/>
-			</div>
+			<Header />
 
 			{/* Parte de baixo */}
 			<div className="py-4 px-4">

@@ -4,9 +4,8 @@ import { Box, Button, Dialog, DialogContent, DialogTitle, IconButton } from "@mu
 import Image from "next/image";
 import CloseIcon from '@mui/icons-material/Close';
 import { zoomEffectStyles } from "../styles";
-import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
-import ArticleTwoToneIcon from '@mui/icons-material/ArticleTwoTone';
-import Link from "next/link";
+import { Header } from "@/components/header";
+
 
 const tables = [
     { id: 1, number: 1, status: "available" },
@@ -129,17 +128,7 @@ export default function AvailableTables() {
     return (
         <div className="flex flex-col h-screen w-full bg-[#231013]">
             {/* Parte de cima */}
-            <div className="bg-[#411313] relative flex items-center justify-between px-4">
-                <Image src="/logo.png" alt="ICBuffet" width={90} height={90} />
-                <Link href="/tabs">
-                    <ArticleTwoToneIcon
-                        sx={{
-                            color: '#FFD700',
-                            fontSize: 50
-                        }}
-                    />
-                </Link>
-            </div>
+            <Header />
 
             {/* Parte de baixo */}
             <div className="py-8 px-4">
