@@ -18,3 +18,13 @@ export const textFieldStyles = {
         color: "#bc8c4e",
     },
 };
+
+export const zoomEffectStyles = {
+    transition: 'transform 0.3s ease',
+    transform: 'scale(1.1)',
+    cursor: 'pointer',
+    '&:hover': {
+      transform: 'scale(1.2)', 
+    },
+  };
+  

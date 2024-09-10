@@ -5,6 +5,7 @@ import Image from "next/image";
 import CloseIcon from '@mui/icons-material/Close';
 import { zoomEffectStyles } from "../styles";
 import { Header } from "@/components/header";
+import { useRouter } from "next/navigation";
 
 
 const tables = [
@@ -82,6 +83,8 @@ const TableDialog = ({ open, onClose, table }) => (
 );
 
 export default function AvailableTables() {
+    const router = useRouter();
+    
     const [open, setOpen] = useState(false);
     const [selectedTable, setSelectedTable] = useState(null);
     const buttonRef = useRef(null);
@@ -91,9 +94,12 @@ export default function AvailableTables() {
     };
 
     const handleClickOpen = () => {
+        router.push("/menuSchedule");
+        {/* 
         if (selectedTable) {
             setOpen(true);
         }
+        */}
     };
 
     const handleClose = () => {
@@ -157,7 +163,7 @@ export default function AvailableTables() {
                 <Button
                     ref={buttonRef}
                     variant="contained"
-                    className={`w-[364px] h-[55px] flex-shrink-0 rounded-[5px] p-2 ${selectedTable
+                    className={`w-[364px] h-[55px] rounded p-2 ${selectedTable
                         ? "bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
                         : "bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
                         } mt-4 font-bold cursor-${selectedTable ? "pointer" : "default"}`}
