@@ -1,10 +1,21 @@
+"use client";
 import { Box, Button, TextField } from "@mui/material";
 import Image from "next/image";
 import { textFieldStyles } from "../styles";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+    const router = useRouter();
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        // Lógica de autenticação aqui, se necessário
+        router.push('/tables');
+    };
+
     return (
+
         <div className="flex h-screen w-full bg-[#411313]">
             <div className="w-[66%] bg-[#231013] relative">
                 <div className="relative h-full w-full">
@@ -38,7 +49,7 @@ export default function Login() {
                         <div className="text-sm text-[#bebec2] py-2">
                             Entre na sua conta para fazer a reserva!
                         </div>
-                        <Box component="form" noValidate sx={{ mt: 1 }}>
+                        <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleLogin}>
                             <TextField
                                 margin="normal"
                                 required
