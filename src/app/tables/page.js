@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Box, Button, Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import Image from "next/image";
-import CloseIcon from '@mui/icons-material/Close';
 import { zoomEffectStyles } from "../styles";
 import { Header } from "@/components/header";
 import { useRouter } from "next/navigation";
@@ -42,50 +41,10 @@ const Table = ({ status, onClick, isSelected }) => (
         </div>
     </Box>
 );
-const TableDialog = ({ open, onClose, table }) => (
-    <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="sm"
-        fullWidth
-        classes={{ paper: 'bg-[#411313] text-white overflow-hidden text-center w-[90vh] h-[70vh]' }}
-    >
-        <DialogTitle className="text-2xl p-4 relative font-bold">
-            Detalhes da Mesa {table?.number}
-            <IconButton
-                edge="end"
-                color="inherit"
-                onClick={onClose}
-                aria-label="close"
-                className="absolute right-4 top-2 text-white"
-            >
-                <CloseIcon />
-            </IconButton>
-        </DialogTitle>
-        <DialogContent className="flex flex-col justify-center items-center h-full p-2">
-            <div className="text-4xl text-white font-bold">
-                Informações da mesa
-            </div>
-            <div className="flex items-center py-10">
-                <div className="text-xl">
-                    Mesa com 4 lugares
-                </div>
-            </div>
-            <Button
-                type="submit"
-                variant="contained"
-                className="w-[400px] h-[60px] py-2 text-base mt-40 bg-[#bc8c4e] hover:bg-[#D58A1E] font-bold rounded"
-            >
-                Confirmar reserva
-            </Button>
-        </DialogContent>
-    </Dialog>
-);
 
 export default function AvailableTables() {
     const router = useRouter();
     
-    const [open, setOpen] = useState(false);
     const [selectedTable, setSelectedTable] = useState(null);
     const buttonRef = useRef(null);
 
@@ -95,15 +54,6 @@ export default function AvailableTables() {
 
     const handleClickOpen = () => {
         router.push("/menuSchedule");
-        {/* 
-        if (selectedTable) {
-            setOpen(true);
-        }
-        */}
-    };
-
-    const handleClose = () => {
-        setOpen(false);
     };
 
     const handleClickOutside = useCallback((event) => {
@@ -172,8 +122,6 @@ export default function AvailableTables() {
                     Reservar mesa
                 </Button>
             </div>
-
-            <TableDialog open={open} onClose={handleClose} table={selectedTable} />
         </div>
     );
 }

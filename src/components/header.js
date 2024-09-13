@@ -2,9 +2,11 @@ import ArticleTwoToneIcon from '@mui/icons-material/ArticleTwoTone';
 import Image from 'next/image';
 import Link from "next/link";
 import MenuBookTwoToneIcon from '@mui/icons-material/MenuBookTwoTone';
-import { useState } from 'react';
-import { Popover } from '@mui/material';
+import { useRef, useState } from 'react';
+import { Avatar, Box, Popover } from '@mui/material';
 import { Menu } from './menu';
+import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
+import { AccountPopover } from './accountPopover';
 
 
 export const Header = () => {
@@ -20,12 +22,15 @@ export const Header = () => {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
+    const settingsRef = useRef(null);
+    const [openAccountPopover, setOpenAccountPopover] = useState(false);
+
     return (
-        <div className="bg-[#411313] relative flex items-center justify-between px-4">
+        <Box className="bg-[#411313] relative flex items-center justify-between px-4">
             <Link href="/tables">
                 <Image src="/logo.png" alt="ICBuffet" width={90} height={90} />
             </Link>
-            <div className="flex gap-4">
+            <Box className="flex gap-4">
                 <Link href="/tabs">
                     <ArticleTwoToneIcon
                         sx={{
@@ -34,7 +39,7 @@ export const Header = () => {
                         }}
                     />
                 </Link>
-                <div>
+                <Box>
                     <MenuBookTwoToneIcon
                         aria-describedby={id}
                         onClick={handleClick}
@@ -56,11 +61,28 @@ export const Header = () => {
                     >
                         <Menu />
                     </Popover>
-                </div>
-
-            </div>
-
-        </div>
+                </Box>
+                <Box>
+                    <Avatar
+                        onClick={() => setOpenAccountPopover(true)}
+                        ref={settingsRef}
+                        sx={{
+                            cursor: 'pointer',
+                            height: 50,
+                            width: 50,
+                            
+                        }}
+                    >
+                        <AccountCircleTwoToneIcon fontSize="large" />
+                    </Avatar>
+                    <AccountPopover
+                        anchorEl={settingsRef.current}
+                        open={openAccountPopover}
+                        onClose={() => setOpenAccountPopover(false)}
+                    />
+                </Box>
+            </Box>
+        </Box>
     )
 
 }
