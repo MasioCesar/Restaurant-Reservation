@@ -16,11 +16,6 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: #231013
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;

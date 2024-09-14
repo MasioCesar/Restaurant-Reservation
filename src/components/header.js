@@ -1,9 +1,8 @@
-import ArticleTwoToneIcon from '@mui/icons-material/ArticleTwoTone';
 import Image from 'next/image';
 import Link from "next/link";
 import MenuBookTwoToneIcon from '@mui/icons-material/MenuBookTwoTone';
 import { useRef, useState } from 'react';
-import { Avatar, Box, Popover } from '@mui/material';
+import { Box, Popover } from '@mui/material';
 import { Menu } from './menu';
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import { AccountPopover } from './accountPopover';
@@ -31,50 +30,36 @@ export const Header = () => {
                 <Image src="/logo.png" alt="ICBuffet" width={90} height={90} />
             </Link>
             <Box className="flex gap-4">
-                <Link href="/tabs">
-                    <ArticleTwoToneIcon
-                        sx={{
-                            color: '#FFD700',
-                            fontSize: 50
-                        }}
-                    />
-                </Link>
+                <MenuBookTwoToneIcon
+                    aria-describedby={id}
+                    onClick={handleClick}
+                    sx={{
+                        fontSize: 50,
+                        cursor: 'pointer'
+                    }}
+                />
+                <Popover
+                    id={id}
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                >
+                    <Menu />
+                </Popover>
                 <Box>
-                    <MenuBookTwoToneIcon
-                        aria-describedby={id}
-                        onClick={handleClick}
-                        sx={{
-                            color: '#FFD700',
-                            fontSize: 50,
-                            cursor: 'pointer'
-                        }}
-                    />
-                    <Popover
-                        id={id}
-                        open={open}
-                        anchorEl={anchorEl}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                    >
-                        <Menu />
-                    </Popover>
-                </Box>
-                <Box>
-                    <Avatar
-                        onClick={() => setOpenAccountPopover(true)}
+                    <AccountCircleTwoToneIcon onClick={() => setOpenAccountPopover(true)}
                         ref={settingsRef}
                         sx={{
                             cursor: 'pointer',
                             height: 50,
                             width: 50,
-                            
-                        }}
-                    >
-                        <AccountCircleTwoToneIcon fontSize="large" />
-                    </Avatar>
+                            color: '#FFD700',
+
+                        }} fontSize="large" />
                     <AccountPopover
                         anchorEl={settingsRef.current}
                         open={openAccountPopover}

@@ -12,7 +12,7 @@ import {
 export const AccountProfile = () => {
 
     return (
-        <Card className='bg-[#411313]'>
+        <Card>
             <CardContent>
                 <Box
                     sx={{
@@ -30,26 +30,25 @@ export const AccountProfile = () => {
                     />
                     <Typography
                         gutterBottom
-                        color='white'
                         variant="h5"
                     >
                         Ranilson
                     </Typography>
                     <Typography
-                        className='text-gray-300'
+                        color="neutral.400"
                         variant="body2"
                     >
                         {'Maceió - Alagoas'}
                     </Typography>
                 </Box>
             </CardContent>
-            <Divider sx={{ backgroundColor: '#411313' }} />
+            <Divider />
             <CardActions >
                 <Button
                     fullWidth
-                    className="text-[#FFD700]"
+                    color='primary'
                     variant="text"
-                    sx={{ textTransform: 'none' }}
+                    component="label"
                 >
                     Carregar foto
                 </Button>
