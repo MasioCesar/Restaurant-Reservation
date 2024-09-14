@@ -4,6 +4,7 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import { AccountProfileDetails } from '@/components/accountProfileDetails';
 import { AccountProfile } from '@/components/accountProfile';
 import { Header } from '@/components/header';
+import { Suspense } from 'react';
 
 export default function Account() {
 
@@ -47,7 +48,9 @@ export default function Account() {
                             md={6}
                             xs={12}
                         >
-                            <AccountProfileDetails />
+                            <Suspense fallback={<div>Carregando...</div>}>
+                                <AccountProfileDetails />
+                            </Suspense>
                         </Grid>
                     </Grid>
                 </Container>
