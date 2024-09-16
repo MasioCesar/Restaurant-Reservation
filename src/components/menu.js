@@ -85,7 +85,7 @@ export const Menu = ({ addOrder }) => {
             <div className="relative  md:w-[70px] md:h-[70px] w-[60px] h-[60px]">
               <Image src="/logo.png" alt="ICBuffet" fill />
             </div>
-            <div className="text-[#F3DFA0] md:text-[32px] text-[24px] font-Bebas-Neue whitespace-nowrap leading-nome h-8 md:h-10">
+            <div className="text-[#F3DFA0] md:text-[32px] text-[24px] font-poppins whitespace-nowrap leading-nome h-8 md:h-10">
               IC BUFFET
             </div>
           </div>
@@ -137,7 +137,7 @@ export const Menu = ({ addOrder }) => {
       <section className="overflow-y-auto h-[60vh] sm:h-[70vh] py-4 px-4">
         {pratosFiltrados.map((prato, index) => (
           <article key={index} className="flex flex-row md:flex-row items-center gap-4 mb-4">
-            <div className="relative sm:w-[170px] sm:h-[170px] w-[120px] h-[120px]  flex-shrink-0 rounded-md overflow-hidden shadow-lg">
+            <div className="relative sm:w-[170px] sm:h-[170px] w-[120px] h-[120px]  flex-shrink-0 rounded-md overflow-hidden shadow-lg ">
               <Image
                 src={prato.imagem}
                 alt={prato.alt}
@@ -148,13 +148,13 @@ export const Menu = ({ addOrder }) => {
             </div>
 
             <div className="text-left flex-1">
-              <h2 className="text-[#ffffff] text-[20px] md:text-[24px] font-Bebas-Neue">{prato.nome}</h2>
-              <div className="flex flex-col md:flex-row items-start md:items-center md:gap-4">
+              <h2 className="text-[#ffffff] text-[20px] md:text-[24px] font-poppins">{prato.nome}</h2>
+              <div className="flex flex-col md:flex-row items-start md:items-center md:gap-4 font-poppins">
                 <p className="text-[#ffffff] text-[14px] md:text-[16px] font-Roboto-Slab text-justify hidden md:block mb-2">
                   {prato.descricao}
                 </p>
                 <button
-                  className="md:hidden my-2 bg-[#CA9A55] text-white py-1 px-2  rounded-md hover:bg-[#c69c61]"
+                  className="md:hidden my-2 font-poppins bg-[#CA9A55] text-white py-1 px-2 rounded-md hover:bg-[#c69c61]"
                   onClick={() => handleShowDescription(prato.nome, prato.descricao)}
                 >
                   Ler Descrição
@@ -173,9 +173,9 @@ export const Menu = ({ addOrder }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="relative bg-white p-4 rounded-lg shadow-lg w-11/12 sm:w-3/4 md:w-1/2 lg:w-1/3">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-black text-2xl pt-1 font-Bebas-Neue font-bold">{selectedPrato}</h3>
+              <h3 className="text-black text-2xl pt-1 font-poppins font-bold">{selectedPrato}</h3>
               <button
-                className="bg-[#CA9A55] text-white py-1 px-2 rounded-md hover:bg-[#c69c61] font-bold ml-4"
+                className="bg-[#CA9A55] text-white font-poppins py-1 px-2 rounded-md hover:bg-[#c69c61] font-bold ml-4"
                 onClick={handleCloseDescription}
               >
                 Fechar

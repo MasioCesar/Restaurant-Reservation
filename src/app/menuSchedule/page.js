@@ -263,8 +263,8 @@ export default function MenuSchedule() {
             {reservationDone && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-[#4b0e10] text-white rounded-lg p-7 pt-3 max-w-lg mx-auto text-center">
-                        <div className="text-2xl font-bold py-4">Reserva feita com sucesso!</div>
-                        <p>Aguarde um momento enquanto você é redirecionado...</p>
+                        <div className="text-2xl font-bold py-4 font-poppins">Reserva feita com sucesso!</div>
+                        <p className="font-poppins">Aguarde um momento enquanto você é redirecionado...</p>
                     </div>
                 </div>
             )}
