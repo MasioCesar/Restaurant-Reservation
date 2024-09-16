@@ -69,40 +69,40 @@ export default function MenuSchedule() {
     };
 
     return (
-        <div className="flex flex-col h-screen w-full bg-[#231013] overflow-hidden">
+        <div className="flex flex-col h-screen w-full bg-[#231013] overflow-hidden font-poppins">
             <Header />
-            <div className="flex flex-1 items-center justify-center overflow-hidden relative">
-                <div className="flex flex-1 flex-col lg:flex-row justify-center px-4 py-4 md:px-8  xl:px-[15%] gap-8 h-[86vh] w-[90vw] overflow-hidden">
-                    <div className="hide-on-small flex flex-col bg-[rgba(84,19,19,0.7)] p-4 md:p-6 lg:p-8 rounded-lg  md:rounded-2xl shadow-lg flex-grow max-w-full max-h-full justify-between">
+            <div className="flex flex-1 items-center justify-center overflow-hidden relative font-poppins">
+                <div className="flex flex-1 font-poppins flex-col lg:flex-row justify-center px-4 py-4 md:px-8  xl:px-[15%] gap-8 h-[86vh] w-[90vw] overflow-hidden">
+                    <div className="hide-on-small flex font-poppins flex-col bg-[rgba(84,19,19,0.7)] p-4 md:p-6 lg:p-8 rounded-lg  md:rounded-2xl shadow-lg flex-grow max-w-full max-h-full justify-between">
                         <div>
 
-                            <h2 className="text-lg xl:text-xl 2xl:text-2xl font-bold mb-6 text-center text-[#CA9A55]">
+                            <h2 className="text-lg xl:text-xl 2xl:text-2xl font-bold mb-6 text-center text-[#CA9A55] font-poppins">
                                 Horário de chegada: {arrivalTime}
                             </h2>
-                            <div className="space-y-2 md:space-y-3 min-w-[380px]">
+                            <div className="space-y-2 md:space-y-3 min-w-[380px] font-poppins">
                                 {orders.length > 0 ? (
                                     orders.map((order, index) => (
                                         <div
-                                            className="flex flex-row justify-between items-center pb-2 text-center"
+                                            className="flex flex-row justify-between items-center pb-2 text-center font-poppins"
                                             key={index}
                                         >
-                                            <span className="text-base xl:text-lg 2xl:text-xl bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-4 py-2 min-w-[220px] inline-block itens-center truncate">
+                                            <span className="font-poppins text-base xl:text-lg 2xl:text-xl bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-4 py-2 min-w-[220px] inline-block itens-center truncate">
                                                 {order.item}
                                             </span>
 
-                                            <span className="text-base xl:text-lg 2xl:text-xl font-semibold text-[#f3f3f3] px-2 w-5">:</span>
+                                            <span className="font-poppins text-base xl:text-lg 2xl:text-xl font-semibold text-[#f3f3f3] px-2 w-5">:</span>
 
-                                            <span className="text-base xl:text-lg 2xl:text-xl bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-4 py-2 min-w-[100px] inline-block itens-center truncate">
+                                            <span className="font-poppins text-base xl:text-lg 2xl:text-xl bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-4 py-2 min-w-[100px] inline-block itens-center truncate">
                                                 {order.time}
                                             </span>
 
-                                            <span className="text-base xl:text-lg 2xl:text-xl  text-center font-semibold text-[#f3f3f3] w-10">
+                                            <span className="font-poppins text-base xl:text-lg 2xl:text-xl  text-center font-semibold text-[#f3f3f3] w-10">
                                                 x{order.quantity}
                                             </span>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-base xl:text-lg 2xl:text-xl text-[#ffffff] bg-[#4D1616] font-semibold text-center rounded-xl px-8 py-4">
+                                    <p className="font-poppins text-base xl:text-lg 2xl:text-xl text-[#ffffff] bg-[#4D1616] font-semibold text-center rounded-xl px-8 py-4">
                                         Nenhum pedido adicionado.
                                     </p>
                                 )}
@@ -111,7 +111,7 @@ export default function MenuSchedule() {
 
 
                         <button
-                            className={`text-lg xl:text-xl 2xl:text-2xl bg-[#CA9A55] text-white font-semibold py-2 px-6 rounded mt-4 shadow-md ${orders.length > 0 ? 'hover:bg-[#c69c61] transition-transform duration-300 hover:scale-105' : 'cursor-not-allowed'}`}
+                            className={`font-poppins text-lg xl:text-xl 2xl:text-2xl bg-[#CA9A55] text-white font-semibold py-2 px-6 rounded mt-4 shadow-md ${orders.length > 0 ? 'hover:bg-[#c69c61] transition-transform duration-300 hover:scale-105' : 'cursor-not-allowed'}`}
                             onClick={orders.length > 0 ? () => setShowConfirmation(true) : undefined}
                         >
                             Finalizar Pedido
@@ -148,21 +148,21 @@ export default function MenuSchedule() {
                         <div className="space-y-2 mb-4 flex-1">
                             {orders.length > 0 ? (
                                 orders.map((order, index) => (
-                                    <div className="flex justify-between items-center pb-2" key={index}>
+                                    <div className="font-poppins flex justify-between items-center pb-2" key={index}>
                                         <span className="text-sm md:text-base lg:text-lg bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-2 md:px-4 py-1 md:py-2 min-w-[150px] text-center truncate">
                                             {order.item}
                                         </span>
-                                        <span className="text-sm md:text-base lg:text-lg font-semibold text-[#f3f3f3] px-2">:</span>
+                                        <span className="font-poppins text-sm md:text-base lg:text-lg font-semibold text-[#f3f3f3] px-2">:</span>
                                         <span className="text-sm md:text-base lg:text-lg bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-2 md:px-4 py-1 md:py-2 min-w-[100px] text-center truncate">
                                             {order.time}
                                         </span>
-                                        <span className="text-sm md:text-base lg:text-lg font-semibold text-[#f3f3f3] w-12 text-center">
+                                        <span className="font-poppins text-sm md:text-base lg:text-lg font-semibold text-[#f3f3f3] w-12 text-center">
                                             x{order.quantity}
                                         </span>
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-sm md:text-base lg:text-lg text-[#f3f3f3] bg-[#4D1616] font-semibold text-center rounded-xl px-4 py-2">
+                                <p className="font-poppins text-sm md:text-base lg:text-lg text-[#f3f3f3] bg-[#4D1616] font-semibold text-center rounded-xl px-4 py-2">
                                     Nenhum pedido adicionado.
                                 </p>
                             )}

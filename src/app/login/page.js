@@ -35,17 +35,17 @@ export default function Login() {
                     className="absolute bottom-0 w-full p-4 text-white bg-opacity-90 bg-[#231013]"
                     textAlign="center"
                 >
-                    <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
+                    <Typography variant="h4" component="h1" fontWeight="bold" fontFamily="Poppins, sans-serif" fontSize={24} gutterBottom>
                         IC Buffet - Reserva de Restaurantes
                     </Typography>
-                    <Typography variant="body1" gutterBottom>
+                    <Typography variant="body1" fontFamily="Poppins, sans-serif" fontSize={16} gutterBottom>
                         O IC Buffet oferece uma experiência gastronômica única, permitindo
                         reservas on-line de maneira rápida e prática.
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography variant="body2" fontFamily="Poppins, sans-serif">
                         Contato: (81) 4002-8922 | contato@icbuffet.com
                     </Typography>
-                    <Typography variant="caption" display="block" mt={2}>
+                    <Typography variant="caption" display="block" mt={2} fontFamily="Poppins, sans-serif">
                         © 2024 IC Buffet. Todos os direitos reservados.
                     </Typography>
                 </Box>
@@ -65,10 +65,10 @@ export default function Login() {
                     <Box className="flex justify-center items-center">
                         <Image src="/logo.png" alt="ICBuffet Logo" width={200} height={200} />
                     </Box>
-                    <Typography variant="h5" color="white" fontWeight="bold" gutterBottom>
+                    <Typography variant="h5" fontFamily="Poppins, sans-serif" color="white" fontWeight="bold" gutterBottom>
                         LOGIN
                     </Typography>
-                    <Typography variant="body2" color="#bebec2" gutterBottom>
+                    <Typography variant="body2" color="#bebec2" fontFamily="Poppins, sans-serif" gutterBottom>
                         Entre na sua conta para fazer a reserva!
                     </Typography>
 
@@ -108,20 +108,20 @@ export default function Login() {
                                     bgcolor: "#D58A1E",
                                 },
                             }}
-                            className="bg-[#bc8c4e] hover:bg-[#D58A1E] font-bold"
+                            className="bg-[#bc8c4e] hover:bg-[#D58A1E] font-bold font-poppins"
                         >
                             Entrar
                         </Button>
                     </Box>
 
                     <Box display="flex" justifyContent="center" p={4}>
-                        <Typography variant="body2" color="#C5C5C5" mr={1}>
+                        <Typography variant="body2" color="#C5C5C5" mr={1} fontFamily="Poppins, sans-serif">
                             Ainda não possui conta?
                         </Typography>
                         <Link href="/register" passHref>
                             <Typography
                                 color="white"
-                                className="underline font-bold cursor-pointer"
+                                className="underline font-bold cursor-pointer font-poppins"
                             >
                                 Registrar-se
                             </Typography>

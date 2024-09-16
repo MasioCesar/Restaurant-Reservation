@@ -13,18 +13,18 @@ export default function LayoutPage() {
 	  ];
 
 	return (
-		<div className="flex flex-col h-screen w-full bg-[#231013]">
+		<div className="font-poppins flex flex-col h-screen w-full bg-[#231013]">
 			<Header />
 
 			<div className="py-4 px-4">
-				<Box textAlign="center" fontWeight="bold" fontSize="24px" color="white" fontFamily="Poppins, sans-serif">
+				<Box textAlign="center" fontWeight="regular" fontSize="20px" color="white" fontFamily="Poppins, sans-serif">
 					COMANDAS
 				</Box>
 			</div>
 
 			<Box px={4} flexGrow={1}>
 				<Box display="flex" justifyContent="start" mb={2}>
-					<Box className="bg-[#F3DFA0] text-black p-2 px-6 rounded font-bold font text-xl">
+					<Box className="font-poppins bg-[#F3DFA0] text-black p-2 px-6 rounded font-regular font text-xl">
 						MESAS
 					</Box>
 				</Box>
@@ -52,17 +52,17 @@ export default function LayoutPage() {
 									px={2}
 									py={0.5}
 									fontSize="18px"
-									fontWeight="bold"
+									fontWeight="regular"
 								>
 									{`0${mesa}`}
 								</Box>
 								<Box className="justify-between flex pt-8">
-									<Box textAlign="left" fontWeight="medium" mb={1}>
+									<Box textAlign="left" fontWeight="regular" mb={1}>
 										{pratos.map((prato, i) => (
 											<Box key={i}>{prato}</Box>
 										))}
 									</Box>
-									<Box textAlign="right" fontWeight="medium">
+									<Box textAlign="right" fontWeight="regular">
 										{status.map((st, i) => (
 											<Box key={i}>{st}</Box>
 										))}
