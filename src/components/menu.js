@@ -78,7 +78,7 @@ export const Menu = ({ addOrder }) => {
   };
 
   return (
-    <div className="h-full max-w-[850px] bg-[#541313] rounded-2xl">
+    <div className="h-full max-w-[850px] w-full bg-[#541313] rounded-2xl">
       <div className="relative w-full lg:h-16 sm:h-14 bg-[#390912] flex items-center px-4 rounded-t-2xl">
         <div className="flex items-center justify-between w-full h-full">
           <div className="flex items-center">
