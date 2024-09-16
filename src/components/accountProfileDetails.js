@@ -78,7 +78,7 @@ export const AccountProfileDetails = () => {
 
                 {selectedTab === 1 && (
                     <CardContent>
-                        <Box className="px-4 border border-[#231013]">
+                        <Box className="px-4 border rounded border-[#231013]">
                             {Object.entries(comandas).map(([i, { pratos, status, mesa, data }]) => (
                                 <Box
                                     p={2}
@@ -100,6 +100,7 @@ export const AccountProfileDetails = () => {
                                         py={0.5}
                                         fontSize="18px"
                                         fontWeight="bold"
+                                        className="rounded"
                                     >
                                         <Box>
                                             {`Mesa 0${mesa}`}

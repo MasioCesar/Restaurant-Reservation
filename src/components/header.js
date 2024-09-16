@@ -57,7 +57,7 @@ export const Header = () => {
                             cursor: 'pointer',
                             height: 50,
                             width: 50,
-                            color: '#FFD700',
+                            color: '#bc8c4e',
 
                         }} fontSize="large" />
                     <AccountPopover
