@@ -271,18 +271,20 @@ export default function AvailableTables() {
           </div>
 
           <div className="flex justify-center mb-4 pt-[10%]">
-            <Button
-              ref={buttonRef}
-              variant="contained"
-              className={`w-full max-w-[364px] h-[55px] rounded p-2 ${selectedTable
-                ? "bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
-                : "bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
-                } mt-4 font-bold cursor-${selectedTable ? "pointer" : "default"}`}
-              onClick={handleClickOpen}
-            >
-              Reservar mesa
-            </Button>
-          </div>
+      <Button
+        ref={buttonRef}
+        variant="contained"
+        className={`w-full max-w-[364px] h-[55px] rounded p-2 mt-4 font-bold ${
+          selectedTable
+            ? "bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
+            : "bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
+        } cursor-${selectedTable ? "pointer" : "not-allowed"}`}
+        onClick={handleClickOpen}
+        disabled={!selectedTable}
+      >
+        Reservar mesa
+      </Button>
+    </div>
 
 
           <TableDialog open={open} onClose={handleClose} table={selectedTable} />
