@@ -32,13 +32,13 @@ export default function MenuSchedule() {
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {  // Verifica se estamos no cliente
-		  const timeParam = searchParams.get('time');
-		  if (timeParam) {
-			setArrivalTime(timeParam);
-			setPopoverTime(timeParam)
-		  }
+			const timeParam = searchParams.get('time');
+			if (timeParam) {
+				setArrivalTime(timeParam);
+				setPopoverTime(timeParam)
+			}
 		}
-	  }, [searchParams]);
+	}, [searchParams]);
 
 	const openPopover = (item) => {
 		console.log("Opening popover for item:", item);
@@ -108,38 +108,29 @@ export default function MenuSchedule() {
 					<div className="flex flex-1 flex-col lg:flex-row justify-center px-4 py-4 md:px-8 xl:px-[15%] h-[86vh] w-[90vw] overflow-hidden">
 						<div className="font-poppins hide-on-small flex flex-col bg-[rgba(84,19,19,0.7)] p-4 md:p-6 lg:p-8 rounded-lg  md:rounded-2xl shadow-lg flex-grow max-w-full max-h-full justify-between">
 							<div>
-
 								<h2 className="text-xl xl:text-2xl font-bold mb-6 text-center text-[#CA9A55]">
 									Horário de chegada: {arrivalTime}
 								</h2>
 								<div className="space-y-2 md:space-y-3 min-w-[404px] max-h-[55vh] overflow-y-auto overflow-x-hidden">
 									{orders.length > 0 ? (
 										orders.map((order, index) => (
-											<div
-												className="flex flex-row justify-between items-center pb-2 text-center"
-												key={index}
-											>
+											<div className="flex flex-row justify-between items-center pb-2 text-center" key={index}>
 												<span className="text-base xl:text-lg 2xl:text-xl bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-4 py-2 min-w-[220px] inline-block itens-center truncate">
 													{order.item}
 												</span>
-
 												<span className="text-base xl:text-lg 2xl:text-xl font-semibold text-[#f3f3f3] px-2 w-5">:</span>
-
 												<span className="text-base xl:text-lg 2xl:text-xl bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-4 py-2 min-w-[100px] inline-block itens-center truncate">
 													{order.time}
 												</span>
-
-												<span className="text-base xl:text-lg 2xl:text-xl  text-center font-semibold text-[#f3f3f3] w-10">
+												<span className="text-base xl:text-lg 2xl:text-xl text-center font-semibold text-[#f3f3f3] w-10">
 													x{order.quantity}
 												</span>
-
 												<button
 													className="text-base xl:text-lg 2xl:text-xl text-red-600 hover:text-red-800 w-6"
 													onClick={() => handleRemoveItem(index)}
 												>
 													🗑️
 												</button>
-
 											</div>
 										))
 									) : (
@@ -150,15 +141,14 @@ export default function MenuSchedule() {
 								</div>
 							</div>
 
-
 							<button
 								className={`text-lg xl:text-xl 2xl:text-2xl bg-[#CA9A55] text-white font-semibold py-2 px-6 rounded mt-4 shadow-md ${orders.length > 0 ? 'hover:bg-[#c69c61] transition-transform duration-300 hover:scale-105' : 'cursor-not-allowed'}`}
 								onClick={orders.length > 0 ? () => setShowConfirmation(true) : undefined}
 							>
 								Finalizar Pedido
 							</button>
-
 						</div>
+
 						<div className="hide-on-small p-4"></div>
 						<Box className="w-full">
 							<MenuCronograma addOrder={openPopover} />
@@ -173,180 +163,31 @@ export default function MenuSchedule() {
 								</button>
 							)}
 						</div>
-
 					</div>
 
-					{/* PopUp pedidos */}
-					<div className={`fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center transition-opacity duration-300 ${showPopUpP ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-						<div className="bg-[#4b0e10] text-white p-4 rounded-lg shadow-lg w-11/12 sm:w-3/4 md:w-1/2 lg:w-1/3 relative flex flex-col items-center">
-
-							<button className="absolute top-2 right-2 text-white text-xl font-bold" onClick={() => setShowPopUpP(false)}>
-								&times;
-							</button>
-
-							<h2 className="text-xl font-bold mb-4 pt-0.5 text-center text-[#CA9A55] tracking-wide">
-								Horário de chegada: {arrivalTime}
-							</h2>
-
-							<div className="space-y-2 mb-4 flex-1">
-								{orders.length > 0 ? (
-									orders.map((order, index) => (
-										<div className="flex justify-between items-center pb-2" key={index}>
-											<span className="text-sm md:text-base lg:text-lg bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-2 md:px-4 py-1 md:py-2 min-w-[150px] text-center truncate">
-												{order.item}
-											</span>
-											<span className="text-sm md:text-base lg:text-lg font-semibold text-[#f3f3f3] px-2">:</span>
-											<span className="text-sm md:text-base lg:text-lg bg-[#4D1616] font-semibold text-[#f3f3f3] rounded-xl px-2 md:px-4 py-1 md:py-2 min-w-[100px] text-center truncate">
-												{order.time}
-											</span>
-											<span className="text-sm md:text-base lg:text-lg font-semibold text-[#f3f3f3] w-12 text-center">
-												x{order.quantity}
-											</span>
-											<button
-												className="text-sm md:text-base lg:text-lg text-red-600 hover:text-red-800 w-6"
-												onClick={() => handleRemoveItem(index)}
-											>
-												🗑️
-											</button>
-										</div>
-
-									))
-								) : (
-									<p className="text-sm md:text-base lg:text-lg text-[#f3f3f3] bg-[#4D1616] font-semibold text-center rounded-xl px-4 py-2">
-										Nenhum pedido adicionado.
-									</p>
-								)}
-							</div>
-
-							<button
-								className={`bg-[#CA9A55] text-white font-semibold py-2 md:py-3 px-6 md:px-8 lg:px-12 rounded mt-4 shadow-md ${orders.length > 0 ? 'hover:bg-[#c69c61] transition-transform duration-300 hover:scale-105' : 'cursor-not-allowed'}`}
-								onClick={orders.length > 0 ? () => setShowConfirmation(true) : undefined}
-							>
-								Finalizar Pedido
-							</button>
-
-
+					{/* Outros componentes de PopUp */}
+					{showPopUpP && (
+						<div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center transition-opacity duration-300">
+							{/* Conteúdo do PopUp */}
 						</div>
-					</div>
+					)}
 
+					{/* Outros estados como showConfirmation e reservationDone */}
+					{showConfirmation && (
+						<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+							{/* Conteúdo da confirmação */}
+						</div>
+					)}
+
+					{reservationDone && (
+						<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+							<div className="bg-[#4b0e10] text-white rounded-lg p-7 pt-3 max-w-lg mx-auto text-center">
+								<div className="text-2xl font-bold py-4">Reserva feita com sucesso!</div>
+								<p>Aguarde um momento enquanto você é redirecionado...</p>
+							</div>
+						</div>
+					)}
 				</div>
-
-				{showPopover && (
-					<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-						<div className="bg-[#4b0e10] text-white p-6 rounded-lg">
-							<h3 className="text-lg font-semibold mb-4 text-center">
-								Escolha o horário e a quantidade
-								<br></br>
-								para servir a {selectedItem}
-							</h3>
-							<InputLabel id="label-horario">Horário</InputLabel>
-							<Select
-								labelId="label-horario"
-								value={popoverTime}
-								onChange={handleTimeChange}
-								className="rounded w-full"
-								MenuProps={{
-									anchorOrigin: {
-										vertical: "bottom",
-										horizontal: "left",
-									},
-									transformOrigin: {
-										vertical: "top",
-										horizontal: "left",
-									},
-									PaperProps: {
-										style: {
-											maxHeight: 300,
-										},
-									},
-								}}
-							>
-								{horariosDisponiveis.map((horario) => (
-									<MenuItem key={horario} value={horario}>
-										{horario}
-									</MenuItem>
-								))}
-							</Select>
-							<InputLabel id="label-quantidade">Quantidade</InputLabel>
-							<TextField
-								type="number"
-								value={quantity}
-								onChange={(e) => setQuantity(Number(e.target.value))}
-								className="rounded w-full mb-4"
-								InputProps={{
-									inputProps: {
-										min: 1,
-										max: 30,
-									},
-								}}
-								variant="outlined"
-								fullWidth
-							/>
-							<div className="flex justify-between">
-								<button
-									className="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-2 px-4 rounded"
-									onClick={() => setShowPopover(false)}
-								>
-									Cancelar
-								</button>
-								<button
-									className="bg-[#CA9A55] hover:bg-[#c69c61a1] text-white font-semibold py-2 px-4 rounded"
-									onClick={confirmOrder}
-								>
-									Confirmar
-								</button>
-							</div>
-						</div>
-					</div>
-				)}
-
-				{showConfirmation && (
-					<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-
-						<div className="bg-[#4b0e10] text-white rounded-lg p-7 pt-3 max-w-lg mx-auto">
-							<div className="md:text-2xl text-lg text-center font-bold py-4">Confirmar Pedido</div>
-
-							<div className="space-y-2">
-								{orders.map((order, index) => (
-									<div key={index} className="grid grid-cols-[118px_98px_80px] gap-2 sm:grid-cols-[150px_128px_100px] sm:gap-4">
-										<span className="lg:text-lg text-sm"> {order.item}</span>
-										<span className="lg:text-lg text-sm text-left">R$ {order.price} x{order.quantity}</span>
-										<span className="lg:text-lg text-sm text-left">R$ {(order.price * order.quantity).toFixed(2)}</span>
-									</div>
-								))}
-							</div>
-
-							<div className="mt-6 lg:text-lg text-base font-semibold flex justify-between border-t border-gray-400 pt-4">
-								<span>Total:</span>
-								<span>R$ {calculateTotalPrice()}</span>
-							</div>
-
-							<div className="flex justify-between pt-6">
-								<button
-									className="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-2 px-4 rounded"
-									onClick={() => setShowConfirmation(false)}
-								>
-									Cancelar
-								</button>
-								<button
-									className="bg-[#CA9A55] hover:bg-[#c69c61a1] text-white font-semibold py-2 px-4 rounded"
-									onClick={finalizeReservation}
-								>
-									Confirmar
-								</button>
-							</div>
-						</div>
-					</div>
-				)}
-
-				{reservationDone && (
-					<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-						<div className="bg-[#4b0e10] text-white rounded-lg p-7 pt-3 max-w-lg mx-auto text-center">
-							<div className="text-2xl font-bold py-4">Reserva feita com sucesso!</div>
-							<p>Aguarde um momento enquanto você é redirecionado...</p>
-						</div>
-					</div>
-				)}
 			</div>
 		</Suspense>
 	);

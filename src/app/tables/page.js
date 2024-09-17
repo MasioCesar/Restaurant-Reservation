@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, useCallback, Suspense } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
@@ -315,12 +315,10 @@ export default function AvailableTables() {
               Reservar Mesa
             </Button>
           </div>
-          <Suspense fallback={<div>Carregando...</div>}>
-            <TableDialog open={dialogOpen}
-              onClose={handleCloseDialog}
-              table={selectedTable}
-              onConfirm={handleConfirmReservation} />
-          </Suspense>
+          <TableDialog open={dialogOpen}
+            onClose={handleCloseDialog}
+            table={selectedTable}
+            onConfirm={handleConfirmReservation} />
         </Container>
       </Box>
     </div>
