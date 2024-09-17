@@ -31,13 +31,14 @@ export default function MenuSchedule() {
 	const searchParams = useSearchParams();
 
 	useEffect(() => {
-		// Pega o parâmetro 'time' da URL
-		const timeParam = searchParams.get('time');
-		if (timeParam) {
+		if (typeof window !== 'undefined') {  // Verifica se estamos no cliente
+		  const timeParam = searchParams.get('time');
+		  if (timeParam) {
 			setArrivalTime(timeParam);
 			setPopoverTime(timeParam)
+		  }
 		}
-	}, [searchParams]);
+	  }, [searchParams]);
 
 	const openPopover = (item) => {
 		console.log("Opening popover for item:", item);
