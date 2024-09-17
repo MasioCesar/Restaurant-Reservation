@@ -48,6 +48,7 @@ const Table = ({ status, onClick, isSelected }) => (
       boxSizing: "border-box",
       boxShadow: isSelected ? "0 0 0 4px rgba(202, 154, 85, 0.90)" : "none",
       opacity: status === "unavailable" ? 0.5 : 1,
+      userSelect: "none",
     }}
     className="p-2"
     onClick={status === "available" ? onClick : undefined}
@@ -63,48 +64,8 @@ const Table = ({ status, onClick, isSelected }) => (
   </Box>
 );
 
-const TableDialog = ({ open, onClose, table }) => (
-  <Dialog
-    open={open}
-    onClose={onClose}
-    maxWidth="sm"
-    fullWidth
-    classes={{
-      paper:
-        "bg-[#411313] text-white overflow-hidden text-center w-[90vh] h-[70vh]",
-    }}
-  >
-    <DialogTitle className="text-2xl p-4 relative font-bold">
-      Detalhes da Mesa {table?.number}
-      <IconButton
-        edge="end"
-        color="inherit"
-        onClick={onClose}
-        aria-label="close"
-        className="absolute right-4 top-2 text-white"
-      >
-        <CloseIcon />
-      </IconButton>
-    </DialogTitle>
-    <DialogContent className="flex flex-col justify-center items-center h-full p-2">
-      <div className="text-4xl text-white font-bold">Informações da mesa</div>
-      <div className="flex items-center py-10">
-        <div className="text-xl">Mesa com 4 lugares</div>
-      </div>
-      <Button
-        type="submit"
-        variant="contained"
-        className="w-[400px] h-[60px] py-2 text-base mt-40 bg-[#bc8c4e] hover:bg-[#D58A1E] font-bold rounded"
-      >
-        Confirmar reserva
-      </Button>
-    </DialogContent>
-  </Dialog>
-);
-
 export default function AvailableTables() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -116,10 +77,6 @@ export default function AvailableTables() {
 
   const handleClickOpen = () => {
     router.push("/menuSchedule");
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const handleClickOutside = useCallback(
@@ -169,18 +126,27 @@ export default function AvailableTables() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-[#231013]">
+    <div className="flex flex-col h-screen w-full bg-[#231013] xl:overflow-hidden">
       <Header />
 
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          py: 4
+          py: 4,
+          pt: 1
         }}
       >
         <Container maxWidth="lg" className="h-full">
-          <div className="flex items-center gap-4 p-4">
+
+          <div className="text-center text-xl pb-2">
+            {!selectedDate || !selectedTime ? (<span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
+              Selecione o dia e horário da reserva
+            </span>) : (undefined)}
+
+          </div>
+          <div className="flex items-center gap-4 p-4 pt-2 pb-0">
+
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} md="auto">
                 <div className="text-2xl text-white font-bold">
@@ -237,57 +203,64 @@ export default function AvailableTables() {
 
           <div className="flex flex-col items-center mt-4">
             {!selectedDate || !selectedTime ? (
-              <div className="text-white text-xl font-bold flex flex-col items-center justify-center h-full">
-                <span className="font-bold lg:text-4xl md:text-3xl text-[#bc8c4e]">
-                  Selecione o dia e horário da reserva
-                </span>
-                <div className="mt-4">
-                  <Grid container spacing={4} justifyContent="center" alignItems="center">
-                    {tables.map((table) => (
-                      <Grid item xs={6} sm={4} md={3} lg={2} key={table.id} className="table-container opacity-10">
-                        <Table
-                          status={isTableAvailable(table) ? "available" : "unavailable"}
-                          isSelected={selectedTable?.id === table.id}
-                          onClick={() => handleSelectTable(table)}
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                </div>
+
+              <div className="mt-4">
+                <Grid container spacing={4} justifyContent="center" alignItems="center">
+                  {tables.map((table) => (
+                    <Grid item xs={6} sm={4} md={3} lg={2} key={table.id} className="table-container opacity-10">
+                      <Table
+                        status={isTableAvailable(table) ? "available" : "unavailable"}
+                        isSelected={selectedTable?.id === table.id}
+                        onClick={() => handleSelectTable(table)}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+
               </div>
             ) : (
-              <Grid container spacing={4} justifyContent="center" alignItems="center">
-                {tables.map((table) => (
-                  <Grid item xs={6} sm={4} md={3} lg={2} key={table.id} className="table-container">
-                    <Table
-                      status={isTableAvailable(table) ? "available" : "unavailable"}
-                      isSelected={selectedTable?.id === table.id}
-                      onClick={() => handleSelectTable(table)}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
+              <div>
+                <div className="text-center text-xl pb-2">
+                  <span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
+                    Selecione a mesa disponível
+                  </span>
+
+                </div>
+                <div className="text-white text-xl font-bold flex flex-col items-center justify-center h-full">
+
+                  <div className="mt-4 pt-3">
+                    <Grid container spacing={4} justifyContent="center" alignItems="center">
+                      {tables.map((table) => (
+                        <Grid item xs={6} sm={4} md={3} lg={2} key={table.id} className="table-container">
+                          <Table
+                            status={isTableAvailable(table) ? "available" : "unavailable"}
+                            isSelected={selectedTable?.id === table.id}
+                            onClick={() => handleSelectTable(table)}
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
-
-          <div className="flex justify-center mb-4 pt-[10%]">
-      <Button
-        ref={buttonRef}
-        variant="contained"
-        className={`w-full max-w-[364px] h-[55px] rounded p-2 mt-4 font-bold ${
-          selectedTable
-            ? "bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
-            : "bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
-        } cursor-${selectedTable ? "pointer" : "not-allowed"}`}
-        onClick={handleClickOpen}
-        disabled={!selectedTable}
-      >
-        Reservar mesa
-      </Button>
-    </div>
+          <div className="flex justify-center mb-1 pt-[10%] lg:pt-2 2xl:pt-10">
+            <Button
+              ref={buttonRef}
+              variant="contained"
+              className={`w-full max-w-[364px] h-[55px] rounded p-2 mt-4 font-bold ${selectedTable
+                ? "text-lg font-poppins bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
+                : "text-lg font-poppins bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
+                } cursor-${selectedTable ? "pointer" : "not-allowed"}`}
+              onClick={handleClickOpen}
+              disabled={!selectedTable}
+            >
+              Reservar Mesa
+            </Button>
+          </div>
 
 
-          <TableDialog open={open} onClose={handleClose} table={selectedTable} />
         </Container>
       </Box>
     </div>
