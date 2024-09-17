@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import {
   Box,
   Button,
@@ -182,146 +182,148 @@ export default function AvailableTables() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-[#231013] xl:overflow-hidden">
-      <Header />
+    <Suspense fallback={<div>Carregando...</div>}>
+      <div className="flex flex-col h-screen w-full bg-[#231013] xl:overflow-hidden">
+        <Header />
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 4,
-          pt: 1
-        }}
-      >
-        <Container maxWidth="lg" className="h-full">
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            py: 4,
+            pt: 1
+          }}
+        >
+          <Container maxWidth="lg" className="h-full">
 
-          <div className="text-center text-xl pb-2">
-            {!selectedDate || !selectedTime ? (<span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
-              Selecione o dia e horário da reserva
-            </span>) : (undefined)}
+            <div className="text-center text-xl pb-2">
+              {!selectedDate || !selectedTime ? (<span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
+                Selecione o dia e horário da reserva
+              </span>) : (undefined)}
 
-          </div>
-          <div className="flex items-center gap-4 p-4 pt-2 pb-0">
+            </div>
+            <div className="flex items-center gap-4 p-4 pt-2 pb-0">
 
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md="auto">
-                <div className="text-2xl text-white font-bold">
-                  Dia e Horário da reserva:
-                </div>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                  label="Data"
-                  className="bg-[#411313] rounded"
-                  fullWidth
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel id="label-horario">Horário</InputLabel>
-                  <Select
-                    labelId="label-horario"
-                    value={selectedTime}
-                    onChange={handleTimeChange}
-                    label="Horário"
-                    className="bg-[#411313] rounded"
-                    MenuProps={{
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "left",
-                      },
-                      transformOrigin: {
-                        vertical: "top",
-                        horizontal: "left",
-                      },
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300,
-                        },
-                      },
-                    }}
-                  >
-                    {horariosDisponiveis.map((horario) => (
-                      <MenuItem key={horario} value={horario}>
-                        {horario}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </div>
-
-
-          <div className="flex flex-col items-center mt-4">
-            {!selectedDate || !selectedTime ? (
-
-              <div className="mt-4">
-                <Grid container spacing={4} justifyContent="center" alignItems="center">
-                  {tables.map((table) => (
-                    <Grid item xs={6} sm={4} md={3} lg={2} key={table.id} className="table-container opacity-10">
-                      <Table
-                        status={isTableAvailable(table) ? "available" : "unavailable"}
-                        isSelected={selectedTable?.id === table.id}
-                        onClick={() => handleSelectTable(table)}
-                      />
-                    </Grid>
-                  ))}
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12} md="auto">
+                  <div className="text-2xl text-white font-bold">
+                    Dia e Horário da reserva:
+                  </div>
                 </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    label="Data"
+                    className="bg-[#411313] rounded"
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <FormControl fullWidth>
+                    <InputLabel id="label-horario">Horário</InputLabel>
+                    <Select
+                      labelId="label-horario"
+                      value={selectedTime}
+                      onChange={handleTimeChange}
+                      label="Horário"
+                      className="bg-[#411313] rounded"
+                      MenuProps={{
+                        anchorOrigin: {
+                          vertical: "bottom",
+                          horizontal: "left",
+                        },
+                        transformOrigin: {
+                          vertical: "top",
+                          horizontal: "left",
+                        },
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                          },
+                        },
+                      }}
+                    >
+                      {horariosDisponiveis.map((horario) => (
+                        <MenuItem key={horario} value={horario}>
+                          {horario}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </div>
 
-              </div>
-            ) : (
-              <div>
-                <div className="text-center text-xl pb-2">
-                  <span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
-                    Selecione uma mesa disponível
-                  </span>
+
+            <div className="flex flex-col items-center mt-4">
+              {!selectedDate || !selectedTime ? (
+
+                <div className="mt-4">
+                  <Grid container spacing={4} justifyContent="center" alignItems="center">
+                    {tables.map((table) => (
+                      <Grid item xs={6} sm={4} md={3} lg={2} key={table.id} className="table-container opacity-10">
+                        <Table
+                          status={isTableAvailable(table) ? "available" : "unavailable"}
+                          isSelected={selectedTable?.id === table.id}
+                          onClick={() => handleSelectTable(table)}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
 
                 </div>
-                <div className="text-white text-xl font-bold flex flex-col items-center justify-center h-full">
+              ) : (
+                <div>
+                  <div className="text-center text-xl pb-2">
+                    <span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
+                      Selecione uma mesa disponível
+                    </span>
 
-                  <div className="mt-4 pt-3">
-                    <Grid container spacing={4} justifyContent="center" alignItems="center">
-                      {tables.map((table) => (
-                        <Grid item xs={6} sm={4} md={3} lg={2} key={table.id} className="table-container">
-                          <Table
-                            status={isTableAvailable(table) ? "available" : "unavailable"}
-                            isSelected={selectedTable?.id === table.id}
-                            onClick={() => handleSelectTable(table)}
-                          />
-                        </Grid>
-                      ))}
-                    </Grid>
+                  </div>
+                  <div className="text-white text-xl font-bold flex flex-col items-center justify-center h-full">
+
+                    <div className="mt-4 pt-3">
+                      <Grid container spacing={4} justifyContent="center" alignItems="center">
+                        {tables.map((table) => (
+                          <Grid item xs={6} sm={4} md={3} lg={2} key={table.id} className="table-container">
+                            <Table
+                              status={isTableAvailable(table) ? "available" : "unavailable"}
+                              isSelected={selectedTable?.id === table.id}
+                              onClick={() => handleSelectTable(table)}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-          <div className="flex justify-center mb-1 pt-[10%] lg:pt-2 2xl:pt-10">
-            <Button
-              ref={buttonRef}
-              variant="contained"
-              className={`w-full max-w-[364px] h-[55px] rounded p-2 mt-4 font-bold ${selectedTable
-                ? "text-lg font-poppins bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
-                : "text-lg font-poppins bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
-                } cursor-${selectedTable ? "pointer" : "not-allowed"}`}
-              onClick={handleClickOpenDialog}
-              disabled={!selectedTable}
-            >
-              Reservar Mesa
-            </Button>
-          </div>
+              )}
+            </div>
+            <div className="flex justify-center mb-1 pt-[10%] lg:pt-2 2xl:pt-10">
+              <Button
+                ref={buttonRef}
+                variant="contained"
+                className={`w-full max-w-[364px] h-[55px] rounded p-2 mt-4 font-bold ${selectedTable
+                  ? "text-lg font-poppins bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
+                  : "text-lg font-poppins bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
+                  } cursor-${selectedTable ? "pointer" : "not-allowed"}`}
+                onClick={handleClickOpenDialog}
+                disabled={!selectedTable}
+              >
+                Reservar Mesa
+              </Button>
+            </div>
 
-          <TableDialog open={dialogOpen}
-            onClose={handleCloseDialog}
-            table={selectedTable}
-            onConfirm={handleConfirmReservation} />
-        </Container>
-      </Box>
-    </div>
+            <TableDialog open={dialogOpen}
+              onClose={handleCloseDialog}
+              table={selectedTable}
+              onConfirm={handleConfirmReservation} />
+          </Container>
+        </Box>
+      </div>
+    </Suspense>
   );
 }
