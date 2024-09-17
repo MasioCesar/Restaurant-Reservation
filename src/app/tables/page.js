@@ -64,18 +64,74 @@ const Table = ({ status, onClick, isSelected }) => (
   </Box>
 );
 
+const TableDialog = ({ open, onClose, table, onConfirm }) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    maxWidth="sm"
+    fullWidth
+    classes={{
+      paper:
+        "bg-[#411313] text-white text-center",
+    }}
+  >
+    <DialogTitle className="text-2xl p-4 relative font-bold">
+      Informações da Mesa {table?.number}
+      <IconButton
+        edge="end"
+        color="inherit"
+        onClick={onClose}
+        aria-label="close"
+        className="absolute right-4 top-2 text-white"
+      >
+        <CloseIcon />
+      </IconButton>
+    </DialogTitle>
+    <DialogContent className="flex flex-col justify-center items-center p-2">
+      <div className="flex items-center py-4">
+        <div className="lg:text-xl text-lg p-2">Mesa para quantas pessoas:</div>
+        <TextField
+          label="Apenas números"
+          variant="outlined"
+          type="number"
+        />
+      </div>
+      <Button
+        type="submit"
+        variant="contained"
+        className="max-w-[400px] h-[60px] p-8 mt-8 bg-[#bc8c4e] hover:bg-[#D58A1E] font-bold rounded"
+        onClick={onConfirm}
+      >
+        Continuar Reserva
+      </Button>
+    </DialogContent>
+  </Dialog>
+);
+
 export default function AvailableTables() {
   const router = useRouter();
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
   const buttonRef = useRef(null);
 
   const handleSelectTable = (table) => {
     setSelectedTable(table);
   };
 
-  const handleClickOpen = () => {
+  const handleClickOpenDialog = () => {
+    if (selectedTable) {
+      setDialogOpen(true);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleConfirmReservation = () => {
+    setDialogOpen(false);
     router.push("/menuSchedule");
   };
 
@@ -253,14 +309,17 @@ export default function AvailableTables() {
                 ? "text-lg font-poppins bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
                 : "text-lg font-poppins bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
                 } cursor-${selectedTable ? "pointer" : "not-allowed"}`}
-              onClick={handleClickOpen}
+              onClick={handleClickOpenDialog}
               disabled={!selectedTable}
             >
               Reservar Mesa
             </Button>
           </div>
 
-
+          <TableDialog open={dialogOpen}
+            onClose={handleCloseDialog}
+            table={selectedTable}
+            onConfirm={handleConfirmReservation} />
         </Container>
       </Box>
     </div>
