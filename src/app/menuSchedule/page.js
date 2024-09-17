@@ -2,13 +2,17 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { useRouter } from "next/navigation";
-import { Box } from "@mui/material";
+import { Box, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { MenuCronograma } from "@/components/menuCronograma";
 
 const convertPriceStringToNumber = (priceString) => {
 	const numericString = priceString.replace('R$ ', '').replace(',', '.');
 	return parseFloat(numericString).toFixed(2);
 };
+
+const horariosDisponiveis = ["17:00", "17:15", "17:30", "17:45", "18:00", "18:15", "18:30", "18:45", "19:00", "19:15", "19:30", "19:45", "20:00",
+	"20:15", "20:30", "20:45", "21:00", "21:15", "21:30", "21:45", "22:00", "22:15", "22:30", "22:45", "23:00", "23:15", "23:30", "23:45", "00:00"
+];
 
 export default function MenuSchedule() {
 	const router = useRouter();
@@ -55,6 +59,10 @@ export default function MenuSchedule() {
 			setShowPopover(false);
 			setPopoverTime("17:00");
 		}
+	};
+
+	const handleTimeChange = (event) => {
+		setPopoverTime(event.target.value);
 	};
 
 	const calculateTotalPrice = () => {
@@ -219,19 +227,48 @@ export default function MenuSchedule() {
 							<br></br>
 							para servir a {selectedItem}
 						</h3>
-
-						<input
-							type="time"
-							className="border rounded-md p-2 mb-4 w-full text-black"
+						<InputLabel id="label-horario">Horário</InputLabel>
+						<Select
+							labelId="label-horario"
 							value={popoverTime}
-							onChange={(e) => setPopoverTime(e.target.value)}
-						/>
-						<input
+							onChange={handleTimeChange}
+							className="rounded w-full"
+							MenuProps={{
+								anchorOrigin: {
+									vertical: "bottom",
+									horizontal: "left",
+								},
+								transformOrigin: {
+									vertical: "top",
+									horizontal: "left",
+								},
+								PaperProps: {
+									style: {
+										maxHeight: 300,
+									},
+								},
+							}}
+						>
+							{horariosDisponiveis.map((horario) => (
+								<MenuItem key={horario} value={horario}>
+									{horario}
+								</MenuItem>
+							))}
+						</Select>
+						<InputLabel id="label-quantidade">Quantidade</InputLabel>
+						<TextField
 							type="number"
-							className="border rounded-md p-2 mb-4 w-full text-black"
 							value={quantity}
 							onChange={(e) => setQuantity(Number(e.target.value))}
-							min="1"
+							className="rounded w-full mb-4"
+							InputProps={{
+								inputProps: {
+									min: 1,
+									max: 30,
+								},
+							}}
+							variant="outlined"
+							fullWidth
 						/>
 						<div className="flex justify-between">
 							<button
