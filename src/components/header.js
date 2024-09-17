@@ -48,7 +48,9 @@ export const Header = () => {
                         horizontal: 'right',
                     }}
                 >
-                    <Menu />
+                    <Box className="max-w-[690px] flex justify-center ">
+                        <Menu />
+                    </Box>
                 </Popover>
                 <Box>
                     <AccountCircleTwoToneIcon onClick={() => setOpenAccountPopover(true)}
