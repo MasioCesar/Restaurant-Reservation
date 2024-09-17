@@ -222,7 +222,7 @@ export default function AvailableTables() {
               <div>
                 <div className="text-center text-xl pb-2">
                   <span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
-                    Selecione a mesa disponível
+                    Selecione uma mesa disponível
                   </span>
 
                 </div>
