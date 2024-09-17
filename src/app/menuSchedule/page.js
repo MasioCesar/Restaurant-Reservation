@@ -1,7 +1,7 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Box, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { MenuCronograma } from "@/components/menuCronograma";
 
@@ -17,16 +17,27 @@ const horariosDisponiveis = ["17:00", "17:15", "17:30", "17:45", "18:00", "18:15
 export default function MenuSchedule() {
 	const router = useRouter();
 
-	const [arrivalTime, setArrivalTime] = useState("17:00");
+	const [arrivalTime, setArrivalTime] = useState();
 	const [orders, setOrders] = useState([]);
 	const [selectedItem, setSelectedItem] = useState(null);
-	const [popoverTime, setPopoverTime] = useState("17:00");
+	const [popoverTime, setPopoverTime] = useState();
 	const [showPopover, setShowPopover] = useState(false);
 	const [quantity, setQuantity] = useState(1);
 	const [selectedPrice, setSelectedPrice] = useState(0);
 	const [showConfirmation, setShowConfirmation] = useState(false);
 	const [reservationDone, setReservationDone] = useState(false);
 	const [showPopUpP, setShowPopUpP] = useState(false);
+
+	const searchParams = useSearchParams();
+
+	useEffect(() => {
+		// Pega o parâmetro 'time' da URL
+		const timeParam = searchParams.get('time');
+		if (timeParam) {
+			setArrivalTime(timeParam);
+			setPopoverTime(timeParam)
+		}
+	}, [searchParams]);
 
 	const openPopover = (item) => {
 		console.log("Opening popover for item:", item);
@@ -57,7 +68,6 @@ export default function MenuSchedule() {
 			}
 
 			setShowPopover(false);
-			setPopoverTime("17:00");
 		}
 	};
 

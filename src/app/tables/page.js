@@ -132,7 +132,7 @@ export default function AvailableTables() {
 
   const handleConfirmReservation = () => {
     setDialogOpen(false);
-    router.push("/menuSchedule");
+    router.push(`/menuSchedule?time=${selectedTime}`);
   };
 
   const handleClickOutside = useCallback(
