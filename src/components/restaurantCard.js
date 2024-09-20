@@ -3,11 +3,11 @@ import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 
 export default function restaurantCard({restaurante}){
-    const router = useRouter(); // Inicializar useRouter
+    const router = useRouter();
 
-    // Função para lidar com o clique
+  
     const handleClick = () => {
-        router.push("/tables"); // Redirecionar para a página de reservas
+        router.push("/tables");
     };
 
     return (
