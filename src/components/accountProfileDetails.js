@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs, Tab, Card, Divider, CardContent, Grid, TextField, Box, Button, Typography } from '@mui/material';
+import { Tabs, Tab, Card, Divider, CardContent, Grid, TextField, Box, Button, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton } from '@mui/material';
+import { differenceInHours } from 'date-fns';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export const AccountProfileDetails = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [selectedTab, setSelectedTab] = useState(0);
-
-    const comandas = [
-        { pratos: ["Macarronada", "Água com gás", "Parmegiana"], status: ["19:20", "19:20", "19:50"], mesa: 1, data: "17/09/2024 19:00" },
-    ];
+    const [comandas, setComandas] = useState([
+        { pratos: ["Macarronada", "Água com gás", "Parmegiana"], status: ["19:20", "19:20", "19:50"], mesa: 1, data: "21/09/2024 19:00", reservaHora: new Date().toISOString() },
+    ]);
+    
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [reservationToCancel, setReservationToCancel] = useState(null);
 
     useEffect(() => {
         const section = searchParams.get('section');
@@ -27,6 +34,67 @@ export const AccountProfileDetails = () => {
         } else {
             router.push("/account");
         }
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
+    const showSnackbar = (message, severity = 'info') => {
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
+    const handleCancelReservation = (index) => {
+        if (!comandas[index] || !comandas[index].reservaHora) {
+            showSnackbar("Reserva não encontrada ou inválida.", "error");
+            return;
+        }
+
+        const now = new Date();
+        const reservationDate = new Date(comandas[index].reservaHora);
+
+        if (isNaN(reservationDate)) {
+            showSnackbar("Data da reserva inválida.", "error");
+            return;
+        }
+
+        const hoursDifference = differenceInHours(now, reservationDate);
+
+        if (hoursDifference >= 24) {
+            showSnackbar("O tempo limite para cancelar esta reserva já expirou. Apenas reservas feitas há menos de 24 horas podem ser canceladas.", "warning");
+        } else {
+            setReservationToCancel(index);
+            setDialogOpen(true);
+        }
+    };
+
+    const handleConfirmCancel = () => {
+        const index = reservationToCancel;
+        const updatedComandas = [...comandas];
+        updatedComandas.splice(index, 1);
+        setComandas(updatedComandas);
+        showSnackbar("Sua reserva foi cancelada com sucesso.", "success");
+        setDialogOpen(false);
+        setReservationToCancel(null);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+        setReservationToCancel(null);
+    };
+
+    const handleMakeReservation = () => {
+        const newReservation = {
+            pratos: ["Macarronada", "Água com gás", "Parmegiana"],
+            status: ["19:20", "19:20", "19:50"],
+            mesa: 1,
+            data: "21/09/2024 19:00",
+            reservaHora: new Date().toISOString(),
+        };
+        setComandas([...comandas, newReservation]);
+        showSnackbar("Reserva criada com sucesso.", "success");
     };
 
     return (
@@ -79,8 +147,9 @@ export const AccountProfileDetails = () => {
                 {selectedTab === 1 && (
                     <CardContent>
                         <Box className="px-4 border rounded border-[#231013]">
-                            {Object.entries(comandas).map(([i, { pratos, status, mesa, data }]) => (
+                            {comandas.map(({ pratos, status, mesa, data }, index) => (
                                 <Box
+                                    key={index}
                                     p={2}
                                     borderRadius={2}
                                     border="1px solid #411313"
@@ -122,6 +191,21 @@ export const AccountProfileDetails = () => {
                                             ))}
                                         </Box>
                                     </Box>
+
+                                    <Box mt={2} display="flex" justifyContent="flex-end">
+                                        <Tooltip title="Reservas feitas só podem ser canceladas antes de completarem 24 horas.">
+                                            <IconButton>
+                                                <InfoOutlinedIcon fontSize="small" sx={{ color: '#CA9A55' }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => handleCancelReservation(index)}
+                                        >
+                                            Cancelar reserva
+                                        </Button>
+                                    </Box>
                                 </Box>
                             ))}
                         </Box>
@@ -137,6 +221,38 @@ export const AccountProfileDetails = () => {
                     </Box>
                 )}
             </Card>
+
+            {/* Snackbar para feedback */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
+            {/* Diálogo de confirmação */}
+            <Dialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+            >
+                <DialogTitle>Confirmar Cancelamento</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Tem certeza de que deseja cancelar esta reserva?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleConfirmCancel} color="primary">
+                        Confirmar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </form>
     );
 };
