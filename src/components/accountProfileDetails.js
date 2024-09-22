@@ -7,7 +7,7 @@ import { useUser } from '../app/context/UserContext';
 
 export const AccountProfileDetails = () => {
     const router = useRouter();
-    const { setUser } = useUser();
+    const { user, setUser } = useUser();
     const searchParams = useSearchParams();
     const [selectedTab, setSelectedTab] = useState(0);
     const [comandas, setComandas] = useState([
@@ -52,7 +52,7 @@ export const AccountProfileDetails = () => {
 
     const handleCancelReservation = (index) => {
         const reservationDate = parse(comandas[index].data, 'dd/MM/yyyy HH:mm', new Date());
-        const currentDate = new Date(); 
+        const currentDate = new Date();
         const minutesDifference = differenceInMinutes(reservationDate, currentDate);
 
         if (minutesDifference < 1440) { // 24 horas = 1440 minutos
@@ -84,13 +84,15 @@ export const AccountProfileDetails = () => {
         event.preventDefault(); // Evita o recarregamento da página
 
         const formData = new FormData(event.target);
-        const userData = {
+        const newUserData = {
             employeeToken: formData.get('employeeToken'),
         };
 
-        setUser(userData);        
+        setUser(prevUser => ({
+            ...prevUser,         // Mantém os dados anteriores
+            ...newUserData      // Adiciona os novos dados
+        }));
 
-        // Exibe uma Snackbar de sucesso
         showSnackbar("Dados salvos com sucesso!", "success");
     };
 

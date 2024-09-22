@@ -13,10 +13,7 @@ export const Header = () => {
     const open = Boolean(anchorEl);
 
     const handleHome = () => {
-        
-
         setUser(user);
-
         router.push('/restaurants');
     };
 
