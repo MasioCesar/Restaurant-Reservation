@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./theme/globals.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from './theme';
+import { UserProvider } from './context/UserContext';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,9 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {children}
+          <UserProvider>
+            {children} 
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>

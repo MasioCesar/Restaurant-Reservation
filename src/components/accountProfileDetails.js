@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, Tab, Card, Divider, CardContent, Grid, TextField, Box, Button, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton } from '@mui/material';
-import { differenceInHours } from 'date-fns';
+import { differenceInMinutes, parse } from 'date-fns';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useUser } from '../app/context/UserContext';
 
 export const AccountProfileDetails = () => {
     const router = useRouter();
+    const { setUser } = useUser();
     const searchParams = useSearchParams();
     const [selectedTab, setSelectedTab] = useState(0);
     const [comandas, setComandas] = useState([
-        { pratos: ["Macarronada", "Água com gás", "Parmegiana"], status: ["19:20", "19:20", "19:50"], mesa: 1, data: "21/09/2024 19:00", reservaHora: new Date().toISOString() },
+        { pratos: ["Macarronada", "Água com gás", "Parmegiana"], status: ["19:20", "19:20", "19:50"], mesa: 1, data: "21/09/2024 19:00" },
+        { pratos: ["Macarronada", "Água com gás", "Parmegiana"], status: ["19:20", "19:20", "19:50"], mesa: 1, data: "21/09/2024 22:00" },
     ]);
-    
+
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('info');
@@ -46,29 +49,21 @@ export const AccountProfileDetails = () => {
         setSnackbarOpen(true);
     };
 
+
     const handleCancelReservation = (index) => {
-        if (!comandas[index] || !comandas[index].reservaHora) {
-            showSnackbar("Reserva não encontrada ou inválida.", "error");
+        const reservationDate = parse(comandas[index].data, 'dd/MM/yyyy HH:mm', new Date());
+        const currentDate = new Date(); 
+        const minutesDifference = differenceInMinutes(reservationDate, currentDate);
+
+        if (minutesDifference < 1440) { // 24 horas = 1440 minutos
+            showSnackbar("Não é possível cancelar reservas com menos de 24 horas de antecedência.", "warning");
             return;
         }
 
-        const now = new Date();
-        const reservationDate = new Date(comandas[index].reservaHora);
-
-        if (isNaN(reservationDate)) {
-            showSnackbar("Data da reserva inválida.", "error");
-            return;
-        }
-
-        const hoursDifference = differenceInHours(now, reservationDate);
-
-        if (hoursDifference >= 24) {
-            showSnackbar("O tempo limite para cancelar esta reserva já expirou. Apenas reservas feitas há menos de 24 horas podem ser canceladas.", "warning");
-        } else {
-            setReservationToCancel(index);
-            setDialogOpen(true);
-        }
+        setReservationToCancel(index);
+        setDialogOpen(true);
     };
+
 
     const handleConfirmCancel = () => {
         const index = reservationToCancel;
@@ -85,20 +80,22 @@ export const AccountProfileDetails = () => {
         setReservationToCancel(null);
     };
 
-    const handleMakeReservation = () => {
-        const newReservation = {
-            pratos: ["Macarronada", "Água com gás", "Parmegiana"],
-            status: ["19:20", "19:20", "19:50"],
-            mesa: 1,
-            data: "21/09/2024 19:00",
-            reservaHora: new Date().toISOString(),
+    const handleSubmit = (event) => {
+        event.preventDefault(); // Evita o recarregamento da página
+
+        const formData = new FormData(event.target);
+        const userData = {
+            employeeToken: formData.get('employeeToken'),
         };
-        setComandas([...comandas, newReservation]);
-        showSnackbar("Reserva criada com sucesso.", "success");
+
+        setUser(userData);        
+
+        // Exibe uma Snackbar de sucesso
+        showSnackbar("Dados salvos com sucesso!", "success");
     };
 
     return (
-        <form autoComplete="off" noValidate>
+        <form autoComplete="off" noValidate onSubmit={handleSubmit}>
             <Card>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={selectedTab} onChange={handleTabChange} aria-label="Profile and Reservations tabs">
@@ -138,6 +135,15 @@ export const AccountProfileDetails = () => {
                                     label="Número do telefone"
                                     name="phone"
                                     type="number"
+                                />
+                            </Grid>
+                            <Grid item md={6} xs={12}>
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    label="Junte-se a um restaurante"
+                                    name="employeeToken"
+                                    type="password"
                                 />
                             </Grid>
                         </Grid>

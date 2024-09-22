@@ -47,3 +47,29 @@
   }
 }
 
+@media (max-width: 480px) { 
+  .MuiTableRow-root {
+    display: flex; 
+    flex-direction: column; 
+    margin-bottom: 1em; 
+    border: 1px solid #ddd; 
+    padding: 1em; 
+  }
+  .MuiTableHead-root {
+    display: none; 
+  }
+
+  .MuiTableCell-root {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5em 0; 
+  }
+
+  .MuiTableCell-root::before {
+    content: attr(data-label);
+    font-weight: bold;
+    margin-right: 10px;
+  }
+}
+

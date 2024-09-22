@@ -142,7 +142,33 @@ export const theme = createTheme({
         }
       }
     },
-
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: 'white',
+          textAlign: 'center',
+        },
+      },
+    },
+    MuiRadioGroup: {
+      styleOverrides: {
+        root: {
+          display: 'flex',
+          justifyContent: 'center',
+          color: 'white',
+        },
+      },
+    },
+    
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          padding: '8px', // Espaçamento interno das células
+          color: '#FFFFFF', // Cor do texto nas células da tabela
+          borderBottom: '1px solid #ccc' // Borda das células
+        }
+      }
+    },
 
   },
   palette: {
@@ -159,7 +185,7 @@ export const theme = createTheme({
       1000: '#584A73',
       1100: '#7509e8'
     },
-    
+
     background: {
       default: '#231013',
       paper: '#411313',
@@ -240,9 +266,10 @@ export const theme = createTheme({
   ],
   typography: {
     button: {
-      fontWeight: 600
+      fontWeight: 600,
+      fontFamily: "Poppins, sans-serif"
     },
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+    fontFamily: "Poppins, sans-serif",
     body1: {
       fontSize: '1rem',
       fontWeight: 400,
@@ -307,3 +334,4 @@ export const theme = createTheme({
     }
   }
 });
+

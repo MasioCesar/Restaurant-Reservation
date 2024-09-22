@@ -1,75 +1,59 @@
 import Image from 'next/image';
-import Link from "next/link";
-import MenuBookTwoToneIcon from '@mui/icons-material/MenuBookTwoTone';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Box, Popover } from '@mui/material';
-import { Menu } from './menu';
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import { AccountPopover } from './accountPopover';
-
+import { useUser } from '../app/context/UserContext';
+import { useRouter } from 'next/navigation';
 
 export const Header = () => {
-    const [anchorEl, setAnchorEl] = useState(null)
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
+    const router = useRouter();
+    const { user, setUser } = useUser();
+    const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
 
-    const settingsRef = useRef(null);
-    const [openAccountPopover, setOpenAccountPopover] = useState(false);
+    const handleHome = () => {
+        
+
+        setUser(user);
+
+        router.push('/restaurants');
+    };
 
     return (
-        <Box className="bg-[#411313] relative flex items-center justify-between px-4">
-            <Link href="/tables">
+        <Box className="bg-[#411313] relative flex items-center justify-between px-4 md:px-32 lg:px-24">
+            <Box onClick={handleHome} sx={{ cursor: 'pointer' }}>
                 <Image src="/logo.png" alt="ICBuffet" width={90} height={90} />
-            </Link>
+            </Box>
             <Box className="flex gap-4">
-                <MenuBookTwoToneIcon
-                    aria-describedby={id}
-                    onClick={handleClick}
-                    sx={{
-                        fontSize: 50,
-                        cursor: 'pointer'
-                    }}
-                />
                 <Popover
-                    id={id}
                     open={open}
                     anchorEl={anchorEl}
-                    onClose={handleClose}
+                    onClose={() => setAnchorEl(null)}
                     anchorOrigin={{
                         vertical: 'bottom',
                         horizontal: 'right',
                     }}
                 >
-                    <Box className="max-w-[650px] flex justify-center ">
-                        <Menu />
-                    </Box>
                 </Popover>
                 <Box>
-                    <AccountCircleTwoToneIcon onClick={() => setOpenAccountPopover(true)}
-                        ref={settingsRef}
+                    <AccountCircleTwoToneIcon 
+                        onClick={(event) => setAnchorEl(event.currentTarget)} 
                         sx={{
                             cursor: 'pointer',
                             height: 50,
                             width: 50,
                             color: '#bc8c4e',
-
-                        }} fontSize="large" />
+                        }} 
+                        fontSize="large" 
+                    />
                     <AccountPopover 
-                        anchorEl={settingsRef.current}
-                        open={openAccountPopover}
-                        onClose={() => setOpenAccountPopover(false)}
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={() => setAnchorEl(null)}
                     />
                 </Box>
             </Box>
         </Box>
-    )
-
-}
+    );
+};

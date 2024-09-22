@@ -20,6 +20,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { zoomEffectStyles } from "../styles";
 import { Header } from "@/components/header";
 import { useRouter } from "next/navigation";
+import { useUser } from "../context/UserContext";
+
 
 const tables = [
   { id: 1, number: 1, reservations: [{ date: "2024-09-17T17:00:00.000Z" }] },
@@ -64,20 +66,83 @@ const Table = ({ status, onClick, isSelected }) => (
   </Box>
 );
 
+const TableDialog = ({ open, onClose, table, onConfirm }) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    maxWidth="sm"
+    fullWidth
+    classes={{
+      paper:
+        "bg-[#411313] text-white text-center",
+    }}
+  >
+    <DialogTitle className="text-xl md:text-2xl p-4 relative font-bold font-roboto">
+      Informações da Mesa {table?.number}
+      <IconButton
+        edge="end"
+        color="inherit"
+        onClick={onClose}
+        aria-label="close"
+        className="absolute right-4 top-2 text-white"
+      >
+        <CloseIcon />
+      </IconButton>
+    </DialogTitle>
+    <DialogContent className="flex flex-col justify-center items-center p-2 font-roboto">
+      <div className="flex items-center py-4">
+        <div className="lg:text-xl text-lg p-2">Mesa para quantas pessoas:</div>
+        <TextField
+          label="Apenas números"
+          variant="outlined"
+          type="number"
+        />
+      </div>
+      <Button
+        type="submit"
+        variant="contained"
+        className="max-w-[400px] h-[60px] p-8 my-4 bg-[#bc8c4e] hover:bg-[#D58A1E] text-base font-bold rounded font-roboto"
+        onClick={onConfirm}
+      >
+        Continuar Reserva
+      </Button>
+    </DialogContent>
+  </Dialog>
+);
+
 export default function AvailableTables() {
   const router = useRouter();
+  const { setUser } = useUser();
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
   const buttonRef = useRef(null);
 
   const handleSelectTable = (table) => {
     setSelectedTable(table);
   };
 
-  const handleClickOpen = () => {
-    router.push("/menuSchedule");
+  const handleClickOpenDialog = () => {
+    if (selectedTable) {
+      setDialogOpen(true);
+    }
   };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleConfirmReservation = () => {
+    setDialogOpen(false);
+    const userData = {
+        time: selectedTime
+    };
+
+    setUser(userData); // Salva o horário da reserva no contexto do usuário
+
+    router.push('/menuSchedule');
+};
 
   const handleClickOutside = useCallback(
     (event) => {
@@ -253,14 +318,16 @@ export default function AvailableTables() {
                 ? "text-lg font-poppins bg-[#bc8c4e] text-white hover:bg-[#D58A1E]"
                 : "text-lg font-poppins bg-[rgba(188,140,78,0.5)] text-[#a9a9a9] hover:bg-[rgba(188,140,78,0.5)]"
                 } cursor-${selectedTable ? "pointer" : "not-allowed"}`}
-              onClick={handleClickOpen}
+              onClick={handleClickOpenDialog}
               disabled={!selectedTable}
             >
               Reservar Mesa
             </Button>
           </div>
-
-
+          <TableDialog open={dialogOpen}
+            onClose={handleCloseDialog}
+            table={selectedTable}
+            onConfirm={handleConfirmReservation} />
         </Container>
       </Box>
     </div>
