@@ -10,8 +10,10 @@ export default function RestaurantCard({ restaurante }) {
 	const [anchorEl, setAnchorEl] = useState(null);
 
 	const handleCardClick = () => {
-		router.push("/tables");
-	};
+		localStorage.setItem('restaurantId', restaurante.id);
+		router.push('/tables');
+	  };
+	  
 
 	const toggleAddress = (event) => {
 		setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -27,7 +29,7 @@ export default function RestaurantCard({ restaurante }) {
 		>
 			<Image
 				onClick={handleCardClick}
-				src={restaurante.imagem}
+				src={restaurante.imagem ? restaurante.imagem : '/image-null.png'}
 				alt={restaurante.nome}
 				width={400}
 				height={200}
