@@ -185,7 +185,7 @@ export default function RestaurantForm() {
     });
 
     const mesas = Array.from({ length: restaurantData.mesas }, (_, index) => (
-      { number: index + 1, reservations: [{}] }
+      { number: index + 1, reservations: [] }
     ));
 
     const data = {

@@ -100,7 +100,6 @@ export default function AvailableTables() {
   const router = useRouter();
   const { setUser } = useUser();
   const [selectedTable, setSelectedTable] = useState(null);
-  //const [selectedDate, setSelectedDate] = useState("");
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     today.setHours(today.getHours() - 3); // Ajusta para UTC−3
@@ -176,9 +175,9 @@ export default function AvailableTables() {
     }
 
     const selectedDateTime = new Date(`${selectedDate}T${selectedTime}:00.000Z`);
-    return !table.reservations.some((reservation) => {
-      const reservationDate = new Date(reservation.date);
-      return reservationDate.getTime() === selectedDateTime.getTime();
+    return !table.reservations.some((reservationDate) => {
+      const reservationDateTime = new Date(reservationDate);
+      return reservationDateTime.getTime() === selectedDateTime.getTime();
     });
   };
 
@@ -220,12 +219,12 @@ export default function AvailableTables() {
           setHorariosDisponiveis(horarios);
 
           // Definir mesas
-          const mesasComReservas = data.mesas.map(mesa => ({
+          const mesas = data.mesas.map(mesa => ({
             id: mesa.id,
             number: mesa.number,
-            reservations: mesa.reservations,
+            reservations: mesa.reservations // Transformar em array de strings
           }));
-          setTables(mesasComReservas);
+          setTables(mesas);
         } catch (error) {
           console.error('Erro ao buscar restaurantes:', error);
         }
@@ -247,7 +246,7 @@ export default function AvailableTables() {
 
     const oneYearFromToday = new Date(today);
     oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() + 1);
-    
+
     if (selectedDate < today) {
       setSnackbarMessage("A data selecionada não pode ser anterior a hoje.");
       setOpenSnackbar(true);
@@ -294,6 +293,12 @@ export default function AvailableTables() {
                   label="Data"
                   className="bg-[#411313] rounded"
                   fullWidth
+                  InputProps={{
+                    onClick: (event) => {
+                      event.preventDefault(); 
+                      event.target.showPicker();
+                    },
+                  }}
                 />
               </Grid>
               <Snackbar
