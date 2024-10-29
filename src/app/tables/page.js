@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
@@ -14,31 +14,15 @@ import {
   InputLabel,
   Grid,
   Container,
+  Snackbar,
 } from "@mui/material";
+import MuiAlert from '@mui/material/Alert';
 import Image from "next/image";
 import CloseIcon from "@mui/icons-material/Close";
 import { zoomEffectStyles } from "../styles";
 import { Header } from "@/components/header";
 import { useRouter } from "next/navigation";
-
-const tables = [
-  { id: 1, number: 1, reservations: [{ date: "2024-09-17T17:00:00.000Z" }] },
-  { id: 2, number: 2, reservations: [{ date: "2024-09-17T17:00:00.000Z" }] },
-  { id: 3, number: 3, reservations: [{ date: "2024-09-17T17:00:00.000Z" }] },
-  { id: 4, number: 4, reservations: [{ date: "2024-09-17T17:00:00.000Z" }] },
-  { id: 5, number: 5, reservations: [{ date: "2024-09-17T18:00:00.000Z" }] },
-  { id: 6, number: 6, reservations: [] },
-  { id: 7, number: 7, reservations: [] },
-  { id: 8, number: 8, reservations: [] },
-  { id: 9, number: 9, reservations: [{ date: "2024-09-17T19:00:00.000Z" }] },
-  { id: 10, number: 10, reservations: [] },
-  { id: 11, number: 11, reservations: [] },
-  { id: 12, number: 12, reservations: [] },
-];
-
-const horariosDisponiveis = ["17:00", "17:15", "17:30", "17:45", "18:00", "18:15", "18:30", "18:45", "19:00", "19:15", "19:30", "19:45", "20:00",
-  "20:15", "20:30", "20:45", "21:00", "21:15", "21:30", "21:45", "22:00", "22:15", "22:30", "22:45", "23:00"
-];
+import { useUser } from "../context/UserContext";
 
 const Table = ({ status, onClick, isSelected }) => (
   <Box
@@ -75,7 +59,7 @@ const TableDialog = ({ open, onClose, table, onConfirm }) => (
         "bg-[#411313] text-white text-center",
     }}
   >
-    <DialogTitle className="text-2xl p-4 relative font-bold">
+    <DialogTitle className="text-xl md:text-2xl p-4 relative font-bold font-roboto">
       Informações da Mesa {table?.number}
       <IconButton
         edge="end"
@@ -87,7 +71,7 @@ const TableDialog = ({ open, onClose, table, onConfirm }) => (
         <CloseIcon />
       </IconButton>
     </DialogTitle>
-    <DialogContent className="flex flex-col justify-center items-center p-2">
+    <DialogContent className="flex flex-col justify-center items-center p-2 font-roboto">
       <div className="flex items-center py-4">
         <div className="lg:text-xl text-lg p-2">Mesa para quantas pessoas:</div>
         <TextField
@@ -99,7 +83,7 @@ const TableDialog = ({ open, onClose, table, onConfirm }) => (
       <Button
         type="submit"
         variant="contained"
-        className="max-w-[400px] h-[60px] p-8 mt-8 bg-[#bc8c4e] hover:bg-[#D58A1E] font-bold rounded"
+        className="max-w-[400px] h-[60px] p-8 my-4 bg-[#bc8c4e] hover:bg-[#D58A1E] text-base font-bold rounded font-roboto"
         onClick={onConfirm}
       >
         Continuar Reserva
@@ -108,13 +92,27 @@ const TableDialog = ({ open, onClose, table, onConfirm }) => (
   </Dialog>
 );
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 export default function AvailableTables() {
   const router = useRouter();
+  const { setUser } = useUser();
   const [selectedTable, setSelectedTable] = useState(null);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    today.setHours(today.getHours() - 3); // Ajusta para UTC−3
+    return today.toISOString().split('T')[0]; // Formata a data de hoje como YYYY-MM-DD
+  });
   const [selectedTime, setSelectedTime] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [restaurant, setRestaurant] = useState(null);
   const buttonRef = useRef(null);
+  const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
+  const [tables, setTables] = useState([]);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const handleSelectTable = (table) => {
     setSelectedTable(table);
@@ -132,7 +130,13 @@ export default function AvailableTables() {
 
   const handleConfirmReservation = () => {
     setDialogOpen(false);
-    router.push("/menuSchedule");
+    const userData = {
+      time: selectedTime
+    };
+
+    setUser(userData); // Salva o horário da reserva no contexto do usuário
+
+    router.push('/menuSchedule');
   };
 
   const handleClickOutside = useCallback(
@@ -171,9 +175,9 @@ export default function AvailableTables() {
     }
 
     const selectedDateTime = new Date(`${selectedDate}T${selectedTime}:00.000Z`);
-    return !table.reservations.some((reservation) => {
-      const reservationDate = new Date(reservation.date);
-      return reservationDate.getTime() === selectedDateTime.getTime();
+    return !table.reservations.some((reservationDate) => {
+      const reservationDateTime = new Date(reservationDate);
+      return reservationDateTime.getTime() === selectedDateTime.getTime();
     });
   };
 
@@ -181,10 +185,82 @@ export default function AvailableTables() {
     setSelectedTime(event.target.value);
   };
 
+  const gerarHorariosDisponiveis = (openTime, closeTime) => {
+    const horarios = [];
+    const startTime = new Date(`1970-01-01T${openTime}:00.000Z`);
+    const endTime = new Date(`1970-01-01T${closeTime}:00.000Z`);
+    startTime.setMinutes(startTime.getMinutes() + 15); // Start 15 minutes after opening
+    endTime.setMinutes(endTime.getMinutes() - 60); // End 1 hour before closing
+
+    while (startTime <= endTime) {
+      const hours = String(startTime.getUTCHours()).padStart(2, '0');
+      const minutes = String(startTime.getUTCMinutes()).padStart(2, '0');
+      horarios.push(`${hours}:${minutes}`);
+      startTime.setMinutes(startTime.getMinutes() + 15);
+    }
+
+    return horarios;
+  };
+
+  useEffect(() => {
+    const storedRestaurantId = localStorage.getItem('restaurantId');
+
+    if (storedRestaurantId) {
+      const fetchRestaurants = async () => {
+        try {
+          const response = await fetch(`/api/restaurant/${storedRestaurantId}`);
+          const data = await response.json();
+
+          console.log('Dados do restaurante:', data);
+          setRestaurant(data);
+
+          // Gerar horários disponíveis
+          const horarios = gerarHorariosDisponiveis(data.abre, data.fecha);
+          setHorariosDisponiveis(horarios);
+
+          // Definir mesas
+          const mesas = data.mesas.map(mesa => ({
+            id: mesa.id,
+            number: mesa.number,
+            reservations: mesa.reservations // Transformar em array de strings
+          }));
+          setTables(mesas);
+        } catch (error) {
+          console.error('Erro ao buscar restaurantes:', error);
+        }
+      };
+
+      fetchRestaurants();
+    }
+  }, []);
+
+  console.log('Horários disponíveis:', horariosDisponiveis);
+  console.log('Mesas:', tables);
+
+  const handleDateChange = (event) => {
+    const selectedDateValue = event.target.value;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(selectedDateValue);
+    selectedDate.setDate(selectedDate.getDate() + 1);
+
+    const oneYearFromToday = new Date(today);
+    oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() + 1);
+
+    if (selectedDate < today) {
+      setSnackbarMessage("A data selecionada não pode ser anterior a hoje.");
+      setOpenSnackbar(true);
+    } else if (selectedDate > oneYearFromToday) {
+      setSnackbarMessage("A data selecionada não pode ser posterior a 1 ano a partir de hoje.");
+      setOpenSnackbar(true);
+    } else {
+      setSelectedDate(selectedDateValue); // Atualiza a data somente se for válida
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen w-full bg-[#231013] xl:overflow-hidden">
       <Header />
-
       <Box
         component="main"
         sx={{
@@ -194,7 +270,6 @@ export default function AvailableTables() {
         }}
       >
         <Container maxWidth="lg" className="h-full">
-
           <div className="text-center text-xl pb-2">
             {!selectedDate || !selectedTime ? (<span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
               Selecione o dia e horário da reserva
@@ -213,13 +288,29 @@ export default function AvailableTables() {
                 <TextField
                   type="date"
                   value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
+                  onChange={handleDateChange}
                   InputLabelProps={{ shrink: true }}
                   label="Data"
                   className="bg-[#411313] rounded"
                   fullWidth
+                  InputProps={{
+                    onClick: (event) => {
+                      event.preventDefault(); 
+                      event.target.showPicker();
+                    },
+                  }}
                 />
               </Grid>
+              <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={() => setOpenSnackbar(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+              >
+                <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+                  {snackbarMessage}
+                </Alert>
+              </Snackbar>
               <Grid item xs={12} md={3}>
                 <FormControl fullWidth>
                   <InputLabel id="label-horario">Horário</InputLabel>
@@ -255,8 +346,6 @@ export default function AvailableTables() {
               </Grid>
             </Grid>
           </div>
-
-
           <div className="flex flex-col items-center mt-4">
             {!selectedDate || !selectedTime ? (
 
@@ -272,18 +361,15 @@ export default function AvailableTables() {
                     </Grid>
                   ))}
                 </Grid>
-
               </div>
             ) : (
               <div>
                 <div className="text-center text-xl pb-2">
                   <span className="font-bold lg:text-2xl md:text-2xl text-[#bc8c4e]">
-                    Selecione a mesa disponível
+                    Selecione uma mesa disponível
                   </span>
-
                 </div>
                 <div className="text-white text-xl font-bold flex flex-col items-center justify-center h-full">
-
                   <div className="mt-4 pt-3">
                     <Grid container spacing={4} justifyContent="center" alignItems="center">
                       {tables.map((table) => (
@@ -315,7 +401,6 @@ export default function AvailableTables() {
               Reservar Mesa
             </Button>
           </div>
-
           <TableDialog open={dialogOpen}
             onClose={handleCloseDialog}
             table={selectedTable}

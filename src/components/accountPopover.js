@@ -1,9 +1,13 @@
 import { Box, MenuItem, MenuList, Popover, Typography } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from "next/navigation"
+import { useUser } from '../app/context/UserContext';
+import { useEffect, useState } from 'react';
 
 export const AccountPopover = ({ anchorEl, onClose, open, ...other }) => {
   const router = useRouter()
+  const { user } = useUser();
+  const [employee, setEmployee] = useState(false);
   
   const handleOrders = () => {
     router.push("/account?section=reservas");
@@ -12,6 +16,12 @@ export const AccountPopover = ({ anchorEl, onClose, open, ...other }) => {
   const handleTabs = () => {
     router.push("/tabs");
   }
+
+  useEffect(() => {
+    if (user?.employeeToken === 'abc') {
+      setEmployee(true);
+    }
+}, [user]);
 
   return (
     <Popover
@@ -63,9 +73,11 @@ export const AccountPopover = ({ anchorEl, onClose, open, ...other }) => {
         <MenuItem onClick={handleOrders} className='py-4'>
           Suas reservas
         </MenuItem>
-        <MenuItem onClick={handleTabs} className='py-4'>
-          Comandas
-        </MenuItem>
+        {employee && (
+          <MenuItem onClick={handleTabs} className='py-4'>
+            Comandas
+          </MenuItem>
+        )}
       </MenuList>
     </Popover>
   );
