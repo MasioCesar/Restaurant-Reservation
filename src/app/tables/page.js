@@ -130,6 +130,7 @@ export default function AvailableTables() {
 
   const handleConfirmReservation = () => {
     setDialogOpen(false);
+<<<<<<< HEAD
     const userData = {
       time: selectedTime
     };
@@ -137,6 +138,9 @@ export default function AvailableTables() {
     setUser(userData); // Salva o horário da reserva no contexto do usuário
 
     router.push('/menuSchedule');
+=======
+    router.push(`/menuSchedule?time=${selectedTime}`);
+>>>>>>> 6eaaefc2af6938bc7ca12ee29ae818f877fe30e8
   };
 
   const handleClickOutside = useCallback(
