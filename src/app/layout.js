@@ -2,10 +2,7 @@ import { Inter } from "next/font/google";
 import "./theme/globals.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from './theme';
-<<<<<<< HEAD
 import { UserProvider } from './context/UserContext';
-=======
->>>>>>> 6eaaefc2af6938bc7ca12ee29ae818f877fe30e8
 
 const inter = Inter({ subsets: ["latin"] });
 
