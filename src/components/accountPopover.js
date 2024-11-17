@@ -3,25 +3,27 @@ import NextLink from 'next/link';
 import { useRouter } from "next/navigation"
 import { useUser } from '../app/context/UserContext';
 import { useEffect, useState } from 'react';
+import { useUserDetails } from '@/lib/getRequests'; 
 
 export const AccountPopover = ({ anchorEl, onClose, open, ...other }) => {
-  const router = useRouter()
-  const { user } = useUser();
+  const router = useRouter();
+  const { user } = useUser(); 
   const [employee, setEmployee] = useState(false);
-  
-  const handleOrders = () => {
-    router.push("/account?section=reservas");
-  }
-
-  const handleTabs = () => {
-    router.push("/tabs");
-  }
+  const userDetails = useUserDetails();
 
   useEffect(() => {
     if (user?.employeeToken === 'abc') {
       setEmployee(true);
     }
-}, [user]);
+  }, [user]);
+
+  const handleOrders = () => {
+    router.push("/account?section=reservas");
+  };
+
+  const handleTabs = () => {
+    router.push("/tabs");
+  };
 
   return (
     <Popover
@@ -54,7 +56,7 @@ export const AccountPopover = ({ anchorEl, onClose, open, ...other }) => {
           color="text.secondary"
           variant="body2"
         >
-          Ranilson
+          {userDetails?.userName}
         </Typography>
       </Box>
       <MenuList

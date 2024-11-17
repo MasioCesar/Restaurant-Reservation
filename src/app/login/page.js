@@ -4,14 +4,46 @@ import Image from "next/image";
 import { textFieldStyles } from "../styles";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Login() {
     const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [user, setUser] = useState(null);
 
-    const handleLogin = (e) => {
+    // Verifica se o usuário já está autenticado ao carregar a página
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                router.push("/restaurants"); // Redireciona se o usuário já estiver logado
+            }
+        });
+
+        return () => unsubscribe(); // Limpa o listener ao desmontar o componente
+    }, [router]);
+
+    // Handle de login
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Lógica de autenticação aqui
-        router.push("/restaurants");
+        try {
+            // Configura a persistência do Firebase para LOCAL (pode ser alterada para SESSION se preferir)
+            //await setPersistence(auth, browserLocalPersistence); 
+
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const loggedInUser = {
+                email: userCredential.user.email,
+                uid: userCredential.user.uid,
+            };
+            setUser(loggedInUser);
+
+            router.push("/restaurants"); // Redireciona para a página de restaurantes após o login
+        } catch (err) {
+            setError("Email ou senha incorretos. Tente novamente.");
+        }
     };
 
     return (
@@ -30,6 +62,7 @@ export default function Login() {
                         alt="ICBuffet"
                         fill
                         style={{ objectFit: 'cover' }}
+                        priority 
                     />
                 </div>
                 <Box
@@ -44,7 +77,7 @@ export default function Login() {
                         reservas on-line de maneira rápida e prática.
                     </Typography>
                     <Typography variant="body2" >
-                        Contato: (81) 4002-8922 | contato@icbuffet.com
+                        Contato: (82) 12345-6789 | contato@icbuffet.com
                     </Typography>
                     <Typography variant="caption" display="block" mt={2} >
                         © 2024 IC Buffet. Todos os direitos reservados.
@@ -64,7 +97,7 @@ export default function Login() {
             >
                 <Box width="80%">
                     <Box className="flex justify-center items-center">
-                        <Image src="/logo.png" alt="ICBuffet Logo" width={200} height={200} />
+                        <Image src="/logo.png" alt="ICBuffet Logo" width={200} height={200} priority />
                     </Box>
                     <Typography variant="h5" color="white" fontWeight="bold" gutterBottom>
                         LOGIN
@@ -84,6 +117,8 @@ export default function Login() {
                             autoComplete="email"
                             InputLabelProps={{ className: "text-white" }}
                             sx={textFieldStyles}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -96,7 +131,14 @@ export default function Login() {
                             autoComplete="current-password"
                             InputLabelProps={{ className: "text-white" }}
                             sx={textFieldStyles}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
+                        {error && (
+                            <Typography variant="body2" color="error" gutterBottom>
+                                {error}
+                            </Typography>
+                        )}
                         <Button
                             type="submit"
                             fullWidth

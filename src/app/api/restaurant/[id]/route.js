@@ -20,6 +20,7 @@ export async function GET(request, { params }) {
                 abre: data.abre,
                 fecha: data.fecha,
                 mesas: [],
+                cardapio: data.cardapio,
             };
 
             const mesasRef = collection(db, 'restaurant', id, 'mesas');

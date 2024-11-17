@@ -1,25 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, Tab, Card, Divider, CardContent, Grid, TextField, Box, Button, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton } from '@mui/material';
 import { differenceInMinutes, parse } from 'date-fns';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useUser } from '../app/context/UserContext';
+import { Reservations } from '@/lib/getRequests';
+import { GetContext } from "@/lib/getFirebase";
 
-export const AccountProfileDetails = () => {
+export const AccountProfileDetails = ({ userDetails }) => {
     const router = useRouter();
     const { user, setUser } = useUser();
     const searchParams = useSearchParams();
     const [selectedTab, setSelectedTab] = useState(0);
-    const [comandas, setComandas] = useState([
-        { pratos: ["Macarronada", "Água com gás", "Parmegiana"], status: ["19:20", "19:20", "19:50"], mesa: 1, data: "21/09/2024 19:00" },
-        { pratos: ["Macarronada", "Água com gás", "Parmegiana"], status: ["19:20", "19:20", "19:50"], mesa: 1, data: "21/09/2024 22:00" },
-    ]);
+    const [comandas, setComandas] = useState([]);
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('info');
     const [dialogOpen, setDialogOpen] = useState(false);
     const [reservationToCancel, setReservationToCancel] = useState(null);
+
+    const { cancelReservation } = useContext(GetContext);
+
+    // Carrega as reservas quando o componente é montado
+    Reservations(setComandas);
+
+    console.log(comandas)
 
     useEffect(() => {
         const section = searchParams.get('section');
@@ -49,13 +55,11 @@ export const AccountProfileDetails = () => {
         setSnackbarOpen(true);
     };
 
-
     const handleCancelReservation = (index) => {
-        const reservationDate = parse(comandas[index].data, 'dd/MM/yyyy HH:mm', new Date());
+        const reservationDate = comandas[index].reservationDate + " " + comandas[index].reservationTime;
         const currentDate = new Date();
         const minutesDifference = differenceInMinutes(reservationDate, currentDate);
-
-        if (minutesDifference < 1440) { // 24 horas = 1440 minutos
+        if (minutesDifference < 1440) { // 1440 minutos = 24 horas
             showSnackbar("Não é possível cancelar reservas com menos de 24 horas de antecedência.", "warning");
             return;
         }
@@ -64,12 +68,15 @@ export const AccountProfileDetails = () => {
         setDialogOpen(true);
     };
 
-
     const handleConfirmCancel = () => {
         const index = reservationToCancel;
+
         const updatedComandas = [...comandas];
         updatedComandas.splice(index, 1);
         setComandas(updatedComandas);
+
+        cancelReservation(index);
+
         showSnackbar("Sua reserva foi cancelada com sucesso.", "success");
         setDialogOpen(false);
         setReservationToCancel(null);
@@ -96,6 +103,11 @@ export const AccountProfileDetails = () => {
         showSnackbar("Dados salvos com sucesso!", "success");
     };
 
+    const formatDate = (date) => {
+        const [year, month, day] = date.split('-');
+        return `${day}/${month}/${year}`;
+    };
+
     return (
         <form autoComplete="off" noValidate onSubmit={handleSubmit}>
             <Card>
@@ -115,7 +127,7 @@ export const AccountProfileDetails = () => {
                                     fullWidth
                                     label="Nome completo"
                                     name="userName"
-                                    value="Ranilson Oscar Araujo Paiva"
+                                    value={userDetails.userName}
                                     InputLabelProps={{
                                         shrink: true,
                                     }}
@@ -127,7 +139,7 @@ export const AccountProfileDetails = () => {
                                     fullWidth
                                     disabled
                                     name="email"
-                                    defaultValue="ranilson@ic.ufal.br"
+                                    defaultValue={userDetails.email}
                                 />
                             </Grid>
                             <Grid item md={6} xs={12}>
@@ -155,7 +167,7 @@ export const AccountProfileDetails = () => {
                 {selectedTab === 1 && (
                     <CardContent>
                         <Box className="px-4 border rounded border-[#231013]">
-                            {comandas.map(({ pratos, status, mesa, data }, index) => (
+                            {comandas.map(({ orders, tableNumber, reservationDate, reservationTime }, index) => (
                                 <Box
                                     key={index}
                                     p={2}
@@ -180,28 +192,34 @@ export const AccountProfileDetails = () => {
                                         className="rounded"
                                     >
                                         <Box>
-                                            {`Mesa 0${mesa}`}
+                                            {`Mesa 0${tableNumber}`}
                                         </Box>
                                         <Box>
-                                            {`${data}`}
+                                            {`${formatDate(reservationDate)} ${reservationTime}`}
                                         </Box>
                                     </Box>
 
                                     <Box className="justify-between flex pt-8">
-                                        <Box textAlign="left" fontWeight="medium" mb={1}>
-                                            {pratos.map((prato, i) => (
-                                                <Box key={i}>{prato}</Box>
-                                            ))}
-                                        </Box>
-                                        <Box textAlign="right" fontWeight="medium">
-                                            {status.map((st, i) => (
-                                                <Box key={i}>{st}</Box>
+                                        <Box textAlign="left" fontWeight="medium" mb={1} className="w-full">
+                                            {orders.map((order, i) => (
+                                                <Box key={i}>
+                                                    <div className='flex w-full justify-between'>
+                                                        <div className='flex'>
+                                                            <div className='pr-2'>{`${order.item}`}</div>
+                                                            <div className='pr-2'>{`x ${order.quantity}`}</div>
+                                                        </div>
+                                                        <div className='flex'>
+                                                            <div className='pr-2'>{`Horário: ${order.time}`}</div>
+                                                            <div className='pr-2'>{`R$${order.price}`}</div>
+                                                        </div>
+                                                    </div>
+                                                </Box>
                                             ))}
                                         </Box>
                                     </Box>
 
                                     <Box mt={2} display="flex" justifyContent="flex-end">
-                                        <Tooltip title="Reservas feitas só podem ser canceladas antes de completarem 24 horas.">
+                                        <Tooltip title="Reservas feitas só podem ser canceladas com antecedência mínima de 24 horas.">
                                             <IconButton>
                                                 <InfoOutlinedIcon fontSize="small" sx={{ color: '#CA9A55' }} />
                                             </IconButton>
@@ -248,7 +266,7 @@ export const AccountProfileDetails = () => {
             >
                 <DialogTitle>Confirmar Cancelamento</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
+                    <DialogContentText color={"while"}>
                         Tem certeza de que deseja cancelar esta reserva?
                     </DialogContentText>
                 </DialogContent>

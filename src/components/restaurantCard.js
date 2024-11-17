@@ -12,9 +12,8 @@ export default function RestaurantCard({ restaurante }) {
 	const handleCardClick = () => {
 		localStorage.setItem('restaurantId', restaurante.id);
 		router.push('/tables');
-	  };
-	  
-
+	};
+	
 	const toggleAddress = (event) => {
 		setAnchorEl(anchorEl ? null : event.currentTarget);
 	};

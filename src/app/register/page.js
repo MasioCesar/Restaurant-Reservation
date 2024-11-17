@@ -1,36 +1,81 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Grid, Box, Typography, TextField, Button, Radio, FormControl, FormLabel, RadioGroup, FormControlLabel } from "@mui/material";
 import Image from "next/image";
 import { textFieldStyles } from "../styles";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useUser } from "../context/UserContext";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { setRegisterUser } from "@/lib/setFirebase";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 
 export default function Register() {
+    const form = useRef();
     const router = useRouter();
-    const { setUser } = useUser();
     const [access, setAccess] = useState();
 
-    const handleRegister = (e) => {
-        e.preventDefault();
-        if (!access) {
-            alert("Por favor, selecione Cliente ou Dono.");
-            return;
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            userName: '',
+            password: '',
+            owner: false,
+        },
+        validationSchema: Yup.object({
+            email: Yup
+                .string()
+                .email('Must be a valid email')
+                .max(255)
+                .required(
+                    'Email is required'),
+            userName: Yup
+                .string()
+                .max(255)
+                .required('UserName is required'),
+            password: Yup
+                .string()
+                .max(255)
+                .min(6, "Senha muito fraca")
+                .required('Password is required'),
+            owner: Yup
+                .boolean(),
+        }),
+        onSubmit: () => {
+            console.log("ENTROU")
+            const auth = getAuth();
+            createUserWithEmailAndPassword(auth, formik.values.email, formik.values.password)
+                .then(async () => {
+                    await setRegisterUser(formik.values)
+
+                    if (formik.values.owner == true) {
+                        alert("Quer ser dono")
+                        /*emailjs.sendForm('service_1t2y2qd', 'template_i9ynk3d', form.current, 'o3FH4JUttrmR411Z4')
+                            .then((result) => {
+                                console.log(result.text);
+                            }, (error) => {
+                                console.log(error.text);
+                            });
+                        */
+                    }
+
+                    router
+                        .push('/login')
+                        .catch(console.error);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    if (errorCode == 'auth/email-already-in-use') {
+                        document.querySelector("#error-message").innerHTML = "Email já está em uso";
+                    } if (errorCode == 'auth/invalid-email') {
+                        document.querySelector("#error-message").innerHTML = "Email inválido";
+                    }
+                });
         }
-
-        const formData = new FormData(e.target);
-        const userData = { // Dados do usuário
-            nome: formData.get('nome'),
-            email: formData.get('email'),
-            password: formData.get('password'),
-            access: access
-        };
-
-        setUser(userData);
-
-        router.push('/restaurants');
-    };
+    });
 
     return (
         <Grid container className="min-h-screen bg-[#411313]">
@@ -45,8 +90,8 @@ export default function Register() {
                 <Image
                     src="/icbuffet.png"
                     alt="ICBuffet"
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: 'cover' }} // Usar style diretamente para controlar o objectFit
                     quality={100}
                 />
                 <Box
@@ -81,7 +126,7 @@ export default function Register() {
             >
                 <Box width="90%" maxWidth={400}>
                     <Box className="flex justify-center items-center mb-2">
-                        <Image src="/logo.png" alt="ICBuffet Logo" width={150} height={150} />
+                        <Image src="/logo.png" alt="ICBuffet Logo" width={150} height={150} priority />
                     </Box>
                     <Typography variant="h5" color="white" fontWeight="bold" gutterBottom>
                         REGISTRAR-SE
@@ -89,90 +134,107 @@ export default function Register() {
                     <Typography variant="body2" color="#bebec2" gutterBottom>
                         Crie sua conta para fazer a reserva!
                     </Typography>
+                    <form ref={form} onSubmit={formik.handleSubmit}>
+                        <Box sx={{ mt: 1 }}>
+                            <TextField
+                                error={Boolean(formik.touched.userName && formik.errors.userName)}
+                                helperText={formik.touched.userName && formik.errors.userName}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="userName"
+                                label="Name"
+                                name="userName"
+                                autoComplete="name"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.userName}
+                                InputLabelProps={{ className: "text-white" }}
+                                sx={textFieldStyles}
+                            />
+                            <TextField
+                                error={Boolean(formik.touched.email && formik.errors.email)}
+                                helperText={formik.touched.email && formik.errors.email}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email"
+                                name="email"
+                                autoComplete="email"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.email}
+                                InputLabelProps={{ className: "text-white" }}
+                                sx={textFieldStyles}
+                            />
+                            <TextField
+                                error={Boolean(formik.touched.password && formik.errors.password)}
+                                helperText={formik.touched.password && formik.errors.password}
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Senha"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                type="password"
+                                value={formik.values.password}
+                                id="password"
+                                autoComplete="current-password"
+                                InputLabelProps={{ className: "text-white" }}
+                                sx={textFieldStyles}
+                            />
 
-                    <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleRegister}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="nome"
-                            label="Nome"
-                            name="nome"
-                            autoComplete="nome"
-                            InputLabelProps={{ className: "text-white" }}
-                            sx={textFieldStyles}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email"
-                            name="email"
-                            autoComplete="email"
-                            InputLabelProps={{ className: "text-white" }}
-                            sx={textFieldStyles}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Senha"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            InputLabelProps={{ className: "text-white" }}
-                            sx={textFieldStyles}
-                        />
-
-                        <FormControl component="fieldset" sx={{ marginTop: 1, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                            <FormLabel component="legend" >Tipo de conta</FormLabel>
-                            <RadioGroup
-                                aria-label="access"
-                                name="access"
-                                value={access}
-                                onChange={(e) => setAccess(e.target.value)}
-                                row
-                                sx={{ justifyContent: 'center' }}
+                            <FormControl
+                                component="fieldset"
+                                sx={{ marginTop: 1, display: "flex", alignItems: "center", flexDirection: "column" }}
                             >
-                                <FormControlLabel value="client" control={<Radio />} label="Cliente" />
-                                <FormControlLabel value="owner" control={<Radio />} label="Dono" />
-                            </RadioGroup>
-                        </FormControl>
+                                <FormLabel component="legend">Tipo de conta</FormLabel>
+                                <RadioGroup
+                                    aria-label="access"
+                                    name="access"
+                                    value={access}
+                                    onChange={(e) => {
+                                        setAccess(e.target.value);
+                                        formik.setFieldValue("owner", e.target.value === "owner");
+                                    }}
+                                    row
+                                    sx={{ justifyContent: "center" }}
+                                >
+                                    <FormControlLabel value="client" control={<Radio />} label="Cliente" />
+                                    <FormControlLabel value="owner" control={<Radio />} label="Dono" />
+                                </RadioGroup>
+                            </FormControl>
 
-
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{
-                                padding: 1.5,
-                                mt: 3,
-                                bgcolor: "#bc8c4e",
-                                "&:hover": {
-                                    bgcolor: "#D58A1E",
-                                },
-                            }}
-                            className="bg-[#bc8c4e] hover:bg-[#D58A1E] font-bold"
-                        >
-                            Criar Conta
-                        </Button>
-                    </Box>
-
-                    <Box display="flex" justifyContent="center" p={2}>
-                        <Typography variant="body2" color="#C5C5C5" mr={1}>
-                            Já possui uma conta?
-                        </Typography>
-                        <Link href="/login" passHref>
-                            <Typography
-                                color="white"
-                                className="underline font-bold cursor-pointer"
+                            <Button
+                                type="submit"
+                                fullWidth
+                                disabled={isSubmitting}
+                                variant="contained"
+                                sx={{
+                                    padding: 1.5,
+                                    mt: 3,
+                                    bgcolor: "#bc8c4e",
+                                    "&:hover": { bgcolor: "#D58A1E" },
+                                }}
+                                className="bg-[#bc8c4e] hover:bg-[#D58A1E] font-bold"
                             >
-                                Fazer login
+                                Criar Conta
+                            </Button>
+                        </Box>
+
+                        <Box display="flex" justifyContent="center" p={2}>
+                            <Typography variant="body2" color="#C5C5C5" mr={1}>
+                                Já possui uma conta?
                             </Typography>
-                        </Link>
-                    </Box>
+                            <Link href="/login" passHref>
+                                <Typography color="white" className="underline font-bold cursor-pointer">
+                                    Fazer login
+                                </Typography>
+                            </Link>
+                        </Box>
+                    </form>
                 </Box>
             </Grid>
         </Grid>

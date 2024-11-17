@@ -6,15 +6,14 @@ import RestaurantCard from "@/components/restaurantCard";
 import SearchIcon from '@mui/icons-material/Search';
 import { useRouter } from "next/navigation";
 import AddIcon from '@mui/icons-material/Add';
-import { useUser } from "../context/UserContext";
+import useAuth from "../hooks/useAuth"; 
 
 export default function Restaurants() {
   const router = useRouter();
-  const { user } = useUser();
+  const user = useAuth();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [restaurants, setRestaurants] = useState([]);
-
   const [accessOwner, setAccessOwner] = useState(false);
 
   useEffect(() => {
@@ -22,9 +21,9 @@ export default function Restaurants() {
       try {
         const response = await fetch('/api/restaurant'); // URL da API
         const data = await response.json();
-  
+
         console.log("data é: ", data);
-  
+
         setRestaurants(data);
       } catch (error) {
         console.error('Error fetching restaurants:', error);
@@ -45,6 +44,8 @@ export default function Restaurants() {
   const filteredRestaurants = restaurants.filter(restaurante =>
     restaurante.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (!user) return null; // Evita renderizar o conteúdo até a autenticação estar verificada
 
   return (
     <div className="flex flex-col h-screen overflow-hidden pb-4 xl:pb-14">
